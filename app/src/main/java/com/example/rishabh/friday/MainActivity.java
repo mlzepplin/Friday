@@ -2,6 +2,7 @@ package com.example.rishabh.friday;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -110,11 +111,11 @@ public class MainActivity extends AppCompatActivity {
 
                 new AdapterView.OnItemClickListener() {
 
-                    public void onItemClick(AdapterView<?> parent,View view, int position, long id) {
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                         String label = String.valueOf(parent.getItemAtPosition(position));
                         Intent launchWordListIntent = new Intent(MainActivity.this, LabelDisplay.class);
-                        launchWordListIntent.putExtra("label",label);
+                        launchWordListIntent.putExtra("label", label);
                         startActivity(launchWordListIntent);
 
                     }
@@ -124,12 +125,12 @@ public class MainActivity extends AppCompatActivity {
         );
 
 
-        Button fab = (Button)findViewById(R.id.fab);
+        FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.fab);
 
         fab.setOnClickListener(
 
                 //Starting up an interface for an event
-                new Button.OnClickListener() {
+                new FloatingActionButton.OnClickListener() {
 
                     public void onClick(View v) {
 
