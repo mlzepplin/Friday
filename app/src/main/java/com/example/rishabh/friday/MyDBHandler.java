@@ -30,7 +30,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
         // TODO Auto-generated method stub
         db.execSQL(
                 "create table " + TABLE_NAME +
-                        "(" + COLUMN_ID + " integer primary key autoincrement, " + COLUMN_TYPE + " text, " + COLUMN_LABEL + " text, " + COLUMN_DESCRIPTION + " text, " + COLUMN_LABEL + " text);"
+                        "(" + COLUMN_ID + " integer primary key autoincrement, " + COLUMN_TYPE + " text, " + COLUMN_DESCRIPTION + " text, " + COLUMN_LABEL + " text);"
         );
     }
 
