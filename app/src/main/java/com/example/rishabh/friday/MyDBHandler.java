@@ -118,16 +118,17 @@ public class MyDBHandler extends SQLiteOpenHelper {
     }
 
 
-    public String searchLabel(String label) {
+    public boolean searchLabel(String label) {
         SQLiteDatabase db = this.getReadableDatabase();
-        String find = new String();
+        boolean find = false;
         Cursor res = db.rawQuery("select * from " + TABLE_NAME + ";", null);
 
         res.moveToFirst();
         while(!res.isAfterLast()){
 
             if( label.equals(res.getString(res.getColumnIndex(COLUMN_LABEL)))){
-                find = res.getString(res.getColumnIndex(COLUMN_TYPE));
+               // find = res.getString(res.getColumnIndex(COLUMN_TYPE));
+                find = true;
                 break;
             }
             res.moveToNext();

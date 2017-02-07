@@ -35,10 +35,10 @@
             android:layout_gravity="center_horizontal|bottom"
             android:background="#f7e1e1"
             android:maxLines = "35"
-            android:focusableInTouchMode="false"
+            android:focusableInTouchMode="true"
             android:scrollbars = "vertical"
-            android:textColor="#FFFAFA"
-            android:focusable="false" />
+            android:textColor="#000000"
+            android:focusable="true" />
 
 
 
@@ -61,9 +61,8 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_marginBottom="68dp"
-                android:layout_gravity="center_horizontal|bottom"
                 android:focusableInTouchMode="true"
-                android:textColor="#FFFAFA"
+                android:textColor="#e154a4"
                 android:focusable="true" />
 
             <Button

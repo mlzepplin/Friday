@@ -13,8 +13,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:id="@+id/noteTextView"
+        android:id="@+id/descriptionTextView"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
@@ -25,5 +24,6 @@
         android:focusable="false"
         android:focusableInTouchMode="false"
         android:layout_alignParentBottom="true"
-        android:background="#f7e1e1" />
+        android:background="#f7e1e1"
+        android:textColor="#f052b9" />
 </RelativeLayout>

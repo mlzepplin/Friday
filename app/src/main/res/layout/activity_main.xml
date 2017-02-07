@@ -48,7 +48,7 @@
                 android:layout_alignEnd="@+id/frameLayout2"
                 android:layout_marginRight="211dp"
                 android:layout_marginEnd="211dp"
-                android:textColor="#FFFAFA"
+                android:textColor="#f4308f"
                 android:focusable="true"
                 android:focusableInTouchMode="true" />
 

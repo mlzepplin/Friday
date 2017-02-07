@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -42,7 +43,6 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View v) {
 
                         // WILL IMPLEMENT LATER
-                        /*
                         if (nullcheck.equals(searchEditText.getText().toString())) {
 
                             // TOAST
@@ -51,21 +51,26 @@ public class MainActivity extends AppCompatActivity {
                         }
                         else{
 
-                            String flabel = myDB.searchLabel(searchEditText.getText().toString());
+                            boolean exists = myDB.searchLabel(searchEditText.getText().toString());
 
-                            if (!nullcheck.equals(flabel)) {
+                            if (exists) {
 
                                 // TOAST
-                                Toast.makeText(MainActivity.this, "Label already exists in " + flabel, Toast.LENGTH_LONG).show();
+                                Toast.makeText(MainActivity.this, "Label already exists" , Toast.LENGTH_LONG).show();
+                                Intent launchLabelDisplayIntent = new Intent(MainActivity.this, LabelDisplay.class);
+                                launchLabelDisplayIntent.putExtra("label", searchEditText.getText().toString());
+                                startActivity(launchLabelDisplayIntent);
+
+
                             }
                             else {
-                                //MEANING ACTIVITY LAUNCHED
-                                Intent launchMeaningIntent = new Intent(MainActivity.this, MeaningDisplay.class);
-                                launchMeaningIntent.putExtra("search", searchEditText.getText().toString());
-                                startActivity(launchMeaningIntent);
+                                //new label ACTIVITY LAUNCHED
+                                Intent launchAddNewLabelIntent = new Intent(MainActivity.this, AddNewLabel.class);
+                                //launchMeaningIntent.putExtra("search", searchEditText.getText().toString());
+                                startActivity(launchAddNewLabelIntent);
                             }
                         }
-                        */
+
                     }
 
                 }
@@ -94,9 +99,9 @@ public class MainActivity extends AppCompatActivity {
 
                     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 
-                        String star = String.valueOf(parent.getItemAtPosition(position));
+                        String label = String.valueOf(parent.getItemAtPosition(position));
                         Intent launchWordListIntent = new Intent(MainActivity.this, LabelDisplay.class);
-                        launchWordListIntent.putExtra("star", star);
+                        launchWordListIntent.putExtra("label", label);
                         startActivity(launchWordListIntent);
 
                         return true;
