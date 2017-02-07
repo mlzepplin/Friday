@@ -1,22 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<android.support.design.widget.CoordinatorLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" android:fitsSystemWindows="true"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:id="@+id/whatsup"
+    >
 
-    <android.support.design.widget.AppBarLayout android:layout_height="wrap_content"
-        android:layout_width="match_parent" android:theme="@style/AppTheme.AppBarOverlay">
 
-        <android.support.v7.widget.Toolbar android:id="@+id/toolbar"
-            android:layout_width="match_parent" android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary" android:theme="@style/AppTheme.AppBarOverlay"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/frameLayout2">
 
-    </android.support.design.widget.AppBarLayout>
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="GO"
+            android:id="@+id/searchButton"
+            android:layout_gravity="right|center_vertical"
+            android:focusable="false"
+            android:focusableInTouchMode="false" />
 
-    <include layout="@layout/content_main" />
+        <EditText
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/searchEditText"
+            android:layout_gravity="left|center_vertical"
+            android:layout_alignParentTop="true"
+            android:layout_alignRight="@+id/frameLayout2"
+            android:layout_alignEnd="@+id/frameLayout2"
+            android:layout_marginRight="211dp"
+            android:layout_marginEnd="211dp"
+            android:textColor="#FFFAFA"
+            android:focusable="true"
+            android:focusableInTouchMode="true" />
 
-</android.support.design.widget.CoordinatorLayout>
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/frameLayout2"
+        android:background="#FFF5EE">
+
+        <ScrollView android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/labelsScrollView"
+            >
+        </ScrollView>
+        <ListView
+            android:layout_width="fill_parent"
+            android:layout_height="388dp"
+            android:id="@+id/labelsListView"
+            android:layout_gravity="left|center_vertical"
+            android:focusableInTouchMode="false"
+            android:focusable="false" />
+    </FrameLayout>
+
+
+</RelativeLayout>
