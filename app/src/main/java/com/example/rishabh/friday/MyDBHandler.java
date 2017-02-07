@@ -30,7 +30,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
         // TODO Auto-generated method stub
         db.execSQL(
                 "create table " + TABLE_NAME +
-                        "(" + COLUMN_ID + " integer primary key autoincrement, " + COLUMN_TYPE + " text, " + COLUMN_LABEL + " text, " + COLUMN_DESCRIPTION + " text, " + COLUMN_LABEL + " text);"
+                        "(" + COLUMN_ID + " integer primary key autoincrement, " + COLUMN_TYPE + " text, " + COLUMN_DESCRIPTION + " text, " + COLUMN_LABEL + " text);"
         );
     }
 
@@ -102,15 +102,15 @@ public class MyDBHandler extends SQLiteOpenHelper {
     }
 
 
-    public ArrayList<String> getAllTypes() {
+    public ArrayList<String> getAllLabels() {
         ArrayList<String> array_list = new ArrayList<>();
 
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("select distinct " + COLUMN_TYPE + " from " + TABLE_NAME + " order by " + COLUMN_TYPE + ";", null);
+        Cursor res = db.rawQuery("select distinct " + COLUMN_LABEL + " from " + TABLE_NAME + " order by " + COLUMN_LABEL + ";", null);
         res.moveToFirst();
 
         while (!res.isAfterLast()) {
-            array_list.add(res.getString(res.getColumnIndex(COLUMN_TYPE)));
+            array_list.add(res.getString(res.getColumnIndex(COLUMN_LABEL)));
             res.moveToNext();
         }
         res.close();

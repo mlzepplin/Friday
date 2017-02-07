@@ -1,68 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout
+
+
+<android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:fitsSystemWindows="true"
-    tools:context=".MainActivity"
-    android:id="@+id/whatsup"
-    >
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:id="@+id/frameLayout2">
 
-        <Button
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="GO"
-            android:id="@+id/searchButton"
-            android:layout_gravity="right|center_vertical"
-            android:focusable="false"
-            android:focusableInTouchMode="false" />
-
-        <EditText
-            android:layout_width="250dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/searchEditText"
-            android:layout_gravity="left|center_vertical"
-            android:layout_alignParentTop="true"
-            android:layout_alignRight="@+id/frameLayout2"
-            android:layout_alignEnd="@+id/frameLayout2"
-            android:layout_marginRight="211dp"
-            android:layout_marginEnd="211dp"
-            android:textColor="#FFFAFA"
-            android:focusable="true"
-            android:focusableInTouchMode="true" />
-
-    </FrameLayout>
-
-    <FrameLayout
-        android:layout_width="match_parent"
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/frameLayout2"
-        android:background="#FFF5EE">
-
-        <ScrollView android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/labelsScrollView"
-            >
-        </ScrollView>
-        <ListView
-            android:layout_width="fill_parent"
-            android:layout_height="388dp"
-            android:id="@+id/labelsListView"
-            android:layout_gravity="left|center_vertical"
-            android:focusableInTouchMode="false"
-            android:focusable="false" />
-    </FrameLayout>
+        tools:context=".MainActivity"
+        android:id="@+id/whatsup"
+        >
 
 
-</RelativeLayout>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:id="@+id/frameLayout2">
+
+            <Button
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="GO"
+                android:id="@+id/searchButton"
+                android:layout_gravity="right|center_vertical"
+                android:focusable="false"
+                android:focusableInTouchMode="false" />
+
+            <EditText
+                android:layout_width="305dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/searchEditText"
+                android:layout_gravity="left|center_vertical"
+                android:layout_alignParentTop="true"
+                android:layout_alignRight="@+id/frameLayout2"
+                android:layout_alignEnd="@+id/frameLayout2"
+                android:layout_marginRight="211dp"
+                android:layout_marginEnd="211dp"
+                android:textColor="#FFFAFA"
+                android:focusable="true"
+                android:focusableInTouchMode="true" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/frameLayout2"
+            android:background="#FFF5EE">
+
+            <ScrollView android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:id="@+id/labelsScrollView"
+                >
+            </ScrollView>
+            <ListView
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:id="@+id/labelsListView"
+                android:layout_gravity="left|center_vertical"
+                android:focusableInTouchMode="false"
+                android:focusable="false" />
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:clickable="true"
+                android:src="@drawable/ic_fab"
+                app:layout_anchor="@id/labelsListView"
+                app:layout_anchorGravity="bottom|right|end"
+                android:layout_gravity="right|bottom" />
+        </FrameLayout>
+
+
+    </RelativeLayout>
+
+
+</android.support.design.widget.CoordinatorLayout>
