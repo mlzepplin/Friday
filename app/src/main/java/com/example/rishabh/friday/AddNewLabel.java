@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class AddNewLabel extends AppCompatActivity {
 
@@ -19,6 +20,7 @@ public class AddNewLabel extends AppCompatActivity {
 
     private String newMeaning;
     private static final String TAG = "Http Connection";
+    final String nullCheck = "";
 
 
     @Override
@@ -58,14 +60,17 @@ public class AddNewLabel extends AppCompatActivity {
                         //Toast.makeText(MeaningDisplay.this, "button clicked", Toast.LENGTH_SHORT).show();
                         String label = addLabelEditText.getText().toString();
                         String description  = addDescriptionEditText.getText().toString();
-                        //String newMeaning = "meaning to be added";
-                        //String newMeaning = new String();
                         String type = "note";
-                        myDB.insertLabel(type, description, label);
-                        //db.execSQL("INSERT INTO words(_word, _meaning, _label) VALUES('"+search+"','"+newLabel+"','"+newMeaning+"');");
-                        Intent launchLabelListIntent = new Intent(AddNewLabel.this, MainActivity.class);
-                        startActivity(launchLabelListIntent);
+                        if(nullCheck.equals(label)){
 
+                            Toast.makeText(AddNewLabel.this, "must enter a label", Toast.LENGTH_LONG).show();
+                        }
+                        else {
+                            myDB.insertLabel(type, description, label);
+                            //db.execSQL("INSERT INTO words(_word, _meaning, _label) VALUES('"+search+"','"+newLabel+"','"+newMeaning+"');");
+                            Intent launchLabelListIntent = new Intent(AddNewLabel.this, MainActivity.class);
+                            startActivity(launchLabelListIntent);
+                        }
                         //Database();
                         // Toast.makeText(MeaningDisplay.this, "word added", Toast.LENGTH_SHORT).show();
 
