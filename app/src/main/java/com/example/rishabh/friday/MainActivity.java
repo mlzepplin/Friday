@@ -1,10 +1,10 @@
 package com.example.rishabh.friday;
 
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
-
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -14,19 +14,16 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
-
-import android.widget.Toast;
-//mic changes begin
 import android.widget.ImageButton;
-import android.content.ActivityNotFoundException;
+import android.widget.ListView;
 import android.widget.TextView;
-import android.speech.tts.TextToSpeech;
-//mic changes end
+import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.Locale;
 
-import static com.example.rishabh.friday.R.id.searchEditText;
+//mic changes begin
+//mic changes end
 
 public class MainActivity extends AppCompatActivity {
 
@@ -266,6 +263,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void findCommand(String com) {
+
         if(com.matches("(.*)note(.*)") || com.matches("(.*)Note(.*)") || com.matches("(.*)NOTE(.*)"))
             fab.callOnClick();
 

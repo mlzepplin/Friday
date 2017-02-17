@@ -23,7 +23,7 @@ public class AddNewLabel extends AppCompatActivity {
     Button addNoteButton;
     EditText addDescriptionEditText;
     MyDBHandler myDB;
-    private TextToSpeech t1;
+    private TextToSpeech t1,t2,t3;
 
     private final int REQ_CODE_SPEECH_INPUT = 100;
 
@@ -31,7 +31,7 @@ public class AddNewLabel extends AppCompatActivity {
     private static final String TAG = "Http Connection";
     final String nullCheck = "";
 
-    private String speech = null;
+    private String speech ;
 
 
 
@@ -93,42 +93,45 @@ public class AddNewLabel extends AppCompatActivity {
         //mic changes begin
         t1=new TextToSpeech(this.getApplicationContext(), new TextToSpeech.OnInitListener() {
             public void onInit(int status) {
+
+                Toast.makeText(AddNewLabel.this, "in init", Toast.LENGTH_SHORT).show();
                 if(status != TextToSpeech.ERROR) {
                     t1.setLanguage(Locale.US);
                     String toSpeak = "Please dictate the note";
-                    t1.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
+                   t1.speak(toSpeak, TextToSpeech.QUEUE_FLUSH,null);
+
                 }
             }
         });
-        t1 = null;
+
         promptSpeechInput();
 
         System.out.println("aa rha hai yahan? "+speech);
 
         if(speech != null) {
             addDescriptionEditText.setText(speech);
-            promptSpeechInput();
-            t1=new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+            //promptSpeechInput();
+            t2=new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
 
                 public void onInit(int status) {
                     if(status != TextToSpeech.ERROR) {
-                        t1.setLanguage(Locale.US);
+                        t2.setLanguage(Locale.US);
                         String toSpeak = "Please state the label name";
-                        t1.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
+                        t2.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
                     }
                 }
             });
-            t1 = null;
+            //t1 = null;
             speech = null;
             promptSpeechInput();
             addLabelEditText.setText(speech);
-            t1=new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+            t3=new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
 
                 public void onInit(int status) {
                     if(status != TextToSpeech.ERROR) {
-                        t1.setLanguage(Locale.US);
+                        t3.setLanguage(Locale.US);
                         String toSpeak = "Do you want to save, YES or NO?";
-                        t1.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
+                        t3.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
                     }
                 }
             });
@@ -330,7 +333,7 @@ public class AddNewLabel extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         ArrayList<String> result;
-        speech = null;
+        //speech = null;
 
         switch (requestCode) {
             case REQ_CODE_SPEECH_INPUT: {
