@@ -1,7 +1,10 @@
 package com.example.rishabh.friday;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
+import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.text.method.ScrollingMovementMethod;
 import android.view.Menu;
@@ -11,16 +14,26 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.Locale;
+
 public class AddNewLabel extends AppCompatActivity {
 
     EditText addLabelEditText;
     Button addNoteButton;
     EditText addDescriptionEditText;
     MyDBHandler myDB;
+    private TextToSpeech t1,t2,t3;
+
+    private final int REQ_CODE_SPEECH_INPUT = 100;
 
     private String newMeaning;
     private static final String TAG = "Http Connection";
     final String nullCheck = "";
+
+    private String speech ;
+
+
 
 
     @Override
@@ -36,9 +49,6 @@ public class AddNewLabel extends AppCompatActivity {
         addDescriptionEditText.setMovementMethod(new ScrollingMovementMethod());
 
         myDB = new MyDBHandler(this);
-
-
-
         // db = openOrCreateDatabase("imeanDB", Context.MODE_PRIVATE,null);
         //db.execSQL("DROP TABLE IF EXISTS words");
         //db.execSQL("CREATE TABLE IF NOT EXISTS words(_word VARCHAR, _meaning VARCHAR, _label VARCHAR);");
@@ -80,7 +90,59 @@ public class AddNewLabel extends AppCompatActivity {
 
                 }
         );
+        //mic changes begin
+        t1=new TextToSpeech(this.getApplicationContext(), new TextToSpeech.OnInitListener() {
+            public void onInit(int status) {
 
+                Toast.makeText(AddNewLabel.this, "in init", Toast.LENGTH_SHORT).show();
+                if(status != TextToSpeech.ERROR) {
+                    t1.setLanguage(Locale.US);
+                    String toSpeak = "Please dictate the note";
+                   t1.speak(toSpeak, TextToSpeech.QUEUE_FLUSH,null);
+
+                }
+            }
+        });
+
+        promptSpeechInput();
+
+        System.out.println("aa rha hai yahan? "+speech);
+
+        if(speech != null) {
+            addDescriptionEditText.setText(speech);
+            //promptSpeechInput();
+            t2=new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+
+                public void onInit(int status) {
+                    if(status != TextToSpeech.ERROR) {
+                        t2.setLanguage(Locale.US);
+                        String toSpeak = "Please state the label name";
+                        t2.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
+                    }
+                }
+            });
+            //t1 = null;
+            speech = null;
+            promptSpeechInput();
+            addLabelEditText.setText(speech);
+            t3=new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+
+                public void onInit(int status) {
+                    if(status != TextToSpeech.ERROR) {
+                        t3.setLanguage(Locale.US);
+                        String toSpeak = "Do you want to save, YES or NO?";
+                        t3.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
+                    }
+                }
+            });
+            speech = null;
+            promptSpeechInput();
+            if(speech.equalsIgnoreCase("yes"))
+                addNoteButton.callOnClick();
+
+        }
+
+        //mic changes end
 
 
 
@@ -247,5 +309,60 @@ public class AddNewLabel extends AppCompatActivity {
     }
     */
 
+    private void beginInput() {
+
+    }
+
+    private void promptSpeechInput() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        //intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+        //       "Speak!!");
+        try {
+            startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
+        } catch (ActivityNotFoundException a) {
+            Toast.makeText(getApplicationContext(),
+                    "speech_not_supported",
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        ArrayList<String> result;
+        //speech = null;
+
+        switch (requestCode) {
+            case REQ_CODE_SPEECH_INPUT: {
+                if (resultCode == RESULT_OK && null != data) {
+
+                    result = data
+                            .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                    float[] confidence = data
+                            .getFloatArrayExtra(RecognizerIntent.EXTRA_CONFIDENCE_SCORES);
+                    try {
+
+                        //String toSpeak = result.get(0);
+                        //t1.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
+                        //txtSpeechInput.setText(result.get(0));
+                        Toast.makeText(getApplicationContext(),
+                                result.get(0),
+                                Toast.LENGTH_SHORT).show();
+                        speech = result.get(0);
+                        //findCommand(result.get(0));
+                    }
+                    catch(NullPointerException ne) {
+                        Toast.makeText(getApplicationContext(),
+                                "No detection !!!",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                }
+                break;
+            }
+        }
+    }
 
 }
