@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.rishabh.friday" >
 
-    <application
+    <application android:name="com.example.rishabh.friday.MyApp"
         android:debuggable="true"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"

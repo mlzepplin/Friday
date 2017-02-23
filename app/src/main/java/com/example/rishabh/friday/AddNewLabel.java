@@ -2,6 +2,7 @@ package com.example.rishabh.friday;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
@@ -25,13 +26,14 @@ public class AddNewLabel extends AppCompatActivity {
     MyDBHandler myDB;
     private TextToSpeech t1,t2,t3;
 
+
     private final int REQ_CODE_SPEECH_INPUT = 100;
 
     private String newMeaning;
     private static final String TAG = "Http Connection";
     final String nullCheck = "";
 
-    private String speech ;
+    private String speechInput ;
 
 
 
@@ -40,6 +42,8 @@ public class AddNewLabel extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_new_label);
+
+
 
         addLabelEditText = (EditText)findViewById(R.id.addLabelEditText);
         addNoteButton = (Button)findViewById(R.id.addNoteButton);
@@ -94,7 +98,10 @@ public class AddNewLabel extends AppCompatActivity {
         t1=new TextToSpeech(this.getApplicationContext(), new TextToSpeech.OnInitListener() {
             public void onInit(int status) {
 
-                Toast.makeText(AddNewLabel.this, "in init", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(AddNewLabel.this, "in init", Toast.LENGTH_SHORT).show();
+
+
+
                 if(status != TextToSpeech.ERROR) {
                     t1.setLanguage(Locale.US);
                     String toSpeak = "Please dictate the note";
@@ -104,9 +111,26 @@ public class AddNewLabel extends AppCompatActivity {
             }
         });
 
-        promptSpeechInput();
+       // MySpeaker mySpeaker = new MySpeaker(this.getApplicationContext());
+        //mySpeaker.run();
 
-        System.out.println("aa rha hai yahan? "+speech);
+
+
+        //MyListener myListener = new MyListener(AddNewLabel.this);
+
+
+        //myListener.printTh();
+        //myListener.run();
+
+        AsyncTaskRunner runner = new AsyncTaskRunner();
+        //String sleepTime = time.getText().toString();
+        runner.execute();
+
+
+        //promptSpeechInput();
+
+        /*
+        System.out.println("aa rha hai yahan? " + speech);
 
         if(speech != null) {
             addDescriptionEditText.setText(speech);
@@ -141,6 +165,7 @@ public class AddNewLabel extends AppCompatActivity {
                 addNoteButton.callOnClick();
 
         }
+        */
 
         //mic changes end
 
@@ -148,29 +173,7 @@ public class AddNewLabel extends AppCompatActivity {
 
     }
 
-    /*public void printDatabase(){
-        //Toast.makeText(MeaningDisplay.this, "edsaafafa", Toast.LENGTH_SHORT).show();
-        Cursor c=m.rawQuery("SELECT * FROM words", null);
-        if(c.getCount()==0)
-        {
-            Toast.makeText(MeaningDisplay.this, "error,no word found", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        StringBuffer buffer=new StringBuffer();
-        while(c.moveToNext())
-        {
-            buffer.append(c.getString(0)+" ");
-            buffer.append(c.getString(1)+" ");
-            buffer.append(c.getString(2)+"\n");
-        }
-        meaningTextView.setText(buffer);
-        addLabelEditText.setText("");
-    }*/
 
-   /* public void addButtonCLicked(View view){
-        WordsAndLabels wordNew = new WordsAndLabels(meaningTextView.getText().toString());
-        dbHandler.addRow(wordNew);
-    }*/
 
 
 
@@ -200,120 +203,12 @@ public class AddNewLabel extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /* //FOR BRINGING IN MEANING
-    public class AsyncHttpTask extends AsyncTask<String, Void, Integer> {
-
-
-        @Override
-        protected Integer doInBackground(String... params) {
-            InputStream inputStream = null;
-
-            HttpURLConnection urlConnection = null;
-
-            Integer result = 0;
-            try {
-                //forming th java.net.URL object
-                URL url = new URL(params[0]);
-
-                urlConnection = (HttpURLConnection) url.openConnection();
-
-                 //optional request header
-                urlConnection.setRequestProperty("Content-Type", "application/json");
-
-                // optional request header
-                urlConnection.setRequestProperty("Accept", "application/json");
-
-                // for Get request
-                urlConnection.setRequestMethod("GET");
-
-                int statusCode = urlConnection.getResponseCode();
-
-                // 200 represents HTTP OK
-                if (statusCode ==  200) {
-
-                    inputStream = new BufferedInputStream(urlConnection.getInputStream());
-
-                    String response = convertInputStreamToString(inputStream);
-
-                    parseResult(response);
-
-                    result = 1; // Successful
-
-                }else{
-                    result = 0; //"Failed to fetch data!";
-                }
-
-            } catch (Exception e) {
-                Log.d(TAG, e.getLocalizedMessage());
-            }
-
-            return result; //"Failed to fetch data!";
-        }
-
-
-        @Override
-        protected void onPostExecute(Integer result) {
-            // Download complete. Lets update UI
-
-            if(result == 1){
-
-                //arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, newMeaning);
-
-                meaningTextView.setText(newMeaning);
-            }else{
-                Log.e(TAG, "Failed to fetch data!");
-            }
-        }
-
-
-        private String convertInputStreamToString(InputStream inputStream) throws IOException {
-
-            BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
-
-            String line = "";
-            String result = "";
-
-            while((line = bufferedReader.readLine()) != null){
-                result += line;
-            }
-
-            // Close Stream
-            if(null!=inputStream){
-                inputStream.close();
-            }
-
-            return result;
-        }
-        private void parseResult(String result) {
-
-            try{
-                JSONArray response = new JSONArray(result);
-                newMeaning = new String();
-
-                for (int i = 0; i < response.length(); i++) {
-                    JSONObject definition = response.getJSONObject(i);
-                    if(i==0) {
-                        newMeaning = definition.getString("text") + "\n\n";
-                    }
-                    else{
-                        newMeaning = newMeaning + definition.getString("text") + "\n\n";
-                    }
-
-                }
-
-
-            }catch (JSONException e){
-                e.printStackTrace();
-            }
-        }
-    }
-    */
 
     private void beginInput() {
 
     }
 
-    private void promptSpeechInput() {
+    public void promptSpeechInput() {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
@@ -330,7 +225,7 @@ public class AddNewLabel extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         ArrayList<String> result;
         //speech = null;
@@ -348,21 +243,99 @@ public class AddNewLabel extends AppCompatActivity {
                         //String toSpeak = result.get(0);
                         //t1.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
                         //txtSpeechInput.setText(result.get(0));
-                        Toast.makeText(getApplicationContext(),
-                                result.get(0),
-                                Toast.LENGTH_SHORT).show();
-                        speech = result.get(0);
+                        speechInput = result.get(0);
+                        addDescriptionEditText.setText(speechInput);
+
+
                         //findCommand(result.get(0));
                     }
                     catch(NullPointerException ne) {
-                        Toast.makeText(getApplicationContext(),
-                                "No detection !!!",
-                                Toast.LENGTH_SHORT).show();
+                       // Toast.makeText(getApplicationContext(),
+                         //       "No detection !!!",
+                           //     Toast.LENGTH_SHORT).show();
                     }
                 }
                 break;
             }
         }
     }
+
+    //Assync Task
+
+    private class AsyncTaskRunner extends AsyncTask<String, String, String> {
+
+        private String resp;
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            //publishProgress("Sleeping...");
+            // Calls onProgressUpdate()
+
+            try {
+
+                t1=new TextToSpeech(MyApp.getContext(), new TextToSpeech.OnInitListener() {
+                    public void onInit(int status) {
+
+                        Toast.makeText(AddNewLabel.this, "in init", Toast.LENGTH_SHORT).show();
+                        if(status != TextToSpeech.ERROR) {
+                            t1.setLanguage(Locale.US);
+                            String toSpeak = "Please dictate the note";
+                            t1.speak(toSpeak, TextToSpeech.QUEUE_FLUSH,null);
+
+                        }
+                    }
+                });
+
+                //t1.stop();
+
+                    } catch (Exception e) {
+                e.printStackTrace();
+                resp = e.getMessage();
+            }
+            return resp;
+        }
+
+
+        @Override
+        protected void onPostExecute(String result) {
+
+            // execution of result of Long time consuming operation
+            while(t1.isSpeaking()){
+
+                if(!t1.isSpeaking()){
+
+                    t1.shutdown();
+
+                    promptSpeechInput();
+                    break;
+
+                }
+
+            }
+
+
+        }
+
+
+        @Override
+        protected void onPreExecute() {
+
+        }
+
+
+        @Override
+        protected void onProgressUpdate(String... text) {
+
+        }
+    }
+
+
+
+
+
+
+
+
 
 }
