@@ -29,11 +29,12 @@ public class MainActivity extends AppCompatActivity {
 
 
     //mic changes begin
-    private TextView txtSpeechInput;
+    //private TextView txtSpeechInput;
     private ImageButton btnSpeak;
     private FloatingActionButton fab;
     private final int REQ_CODE_SPEECH_INPUT = 100;
     private String flag= "INACTIVE";
+    private String from= "button";
 
     //mic changes end
 
@@ -45,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 //mic changes begin
-        txtSpeechInput = (TextView) findViewById(R.id.txtSpeechInput);
+        //txtSpeechInput = (TextView) findViewById(R.id.txtSpeechInput);
         btnSpeak = (ImageButton) findViewById(R.id.btnSpeak);
         btnSpeak.setOnClickListener(new View.OnClickListener() {
 
@@ -174,6 +175,7 @@ public class MainActivity extends AppCompatActivity {
 
                         //ADD NEW LABEL ACTIVITY LAUNCHED
                         Intent launchAddNewLabelIntent = new Intent(MainActivity.this, AddNewLabel.class);
+                        launchAddNewLabelIntent.putExtra("from",from);
                         //launchAddNewLabelIntent.putExtra("search", searchEditText.getText().toString());
                         startActivity(launchAddNewLabelIntent);
                     }
@@ -235,33 +237,35 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         System.out.println("111111");
-        switch (requestCode) {
-            case REQ_CODE_SPEECH_INPUT: {
-                System.out.println("222222 "+resultCode+" "+data.toString());
-                if (resultCode == RESULT_OK && null != data) {
+        if(null != data) {
+            switch (requestCode) {
+                case REQ_CODE_SPEECH_INPUT: {
                     System.out.println("222222 "+resultCode+" "+data.toString());
-                    ArrayList<String> result = data
-                            .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-                    float[] confidence = data
-                            .getFloatArrayExtra(RecognizerIntent.EXTRA_CONFIDENCE_SCORES);
-                    try {
+                    if (resultCode == RESULT_OK && null != data) {
+                        System.out.println("222222 "+resultCode+" "+data.toString());
+                        ArrayList<String> result = data
+                                .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                        float[] confidence = data
+                                .getFloatArrayExtra(RecognizerIntent.EXTRA_CONFIDENCE_SCORES);
+                        try {
 
-                        //String toSpeak = result.get(0);
-                        //t1.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
-                        //txtSpeechInput.setText(result.get(0));
-                        Toast.makeText(getApplicationContext(),
-                                result.get(0),
-                                Toast.LENGTH_SHORT).show();
-                        findCommand(result.get(0));
+                            //String toSpeak = result.get(0);
+                            //t1.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
+                            //txtSpeechInput.setText(result.get(0));
+                            Toast.makeText(getApplicationContext(),
+                                    result.get(0),
+                                    Toast.LENGTH_SHORT).show();
+                            findCommand(result.get(0));
+                        }
+                        catch(NullPointerException ne) {
+                            Toast.makeText(getApplicationContext(),
+                                    "No detection !!!",
+                                    Toast.LENGTH_SHORT).show();
+                        }
                     }
-                    catch(NullPointerException ne) {
-                        Toast.makeText(getApplicationContext(),
-                                "No detection !!!",
-                                Toast.LENGTH_SHORT).show();
-                    }
+                    flag = "INACTIVE";
+                    break;
                 }
-                flag = "INACTIVE";
-                break;
             }
         }
         System.out.println("333333");
@@ -269,8 +273,14 @@ public class MainActivity extends AppCompatActivity {
 
     public void findCommand(String com) {
 
-        if(com.matches("(.*)note(.*)") || com.matches("(.*)Note(.*)") || com.matches("(.*)NOTE(.*)"))
+        if(com.matches("(.*)note(.*)") || com.matches("(.*)Note(.*)") || com.matches("(.*)NOTE(.*)")) {
+            from = "speech";
             fab.callOnClick();
+        }
+        else if(com.matches("(.*)edit(.*)") || com.matches("(.*)Edit(.*)") || com.matches("(.*)EDIT(.*)")) {
+            
+        }
+
 
     }
     // mic changes end

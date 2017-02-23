@@ -35,6 +35,7 @@ public class AddNewLabel extends AppCompatActivity {
     private String seema;
     private SpeechListener speech ;
     private String speak;
+    private String from;
 
 
 
@@ -51,6 +52,9 @@ public class AddNewLabel extends AppCompatActivity {
 
         //making the textView scrollable
         addDescriptionEditText.setMovementMethod(new ScrollingMovementMethod());
+
+        Intent intent = getIntent();
+        from = intent.getStringExtra("from");
 
         myDB = new MyDBHandler(this);
         // db = openOrCreateDatabase("imeanDB", Context.MODE_PRIVATE,null);
@@ -77,7 +81,8 @@ public class AddNewLabel extends AppCompatActivity {
                         });*/
                         //while(t1.isSpeaking());
                         seema = "Description";
-                        promptSpeechInput("Description of the note?");
+                        if(from.equals("speech"))
+                            promptSpeechInput("Description of the note?");
                         //addDescriptionEditText.setText(speak);
 
                     }
@@ -101,7 +106,8 @@ public class AddNewLabel extends AppCompatActivity {
                         });*/
                         //while(t2.isSpeaking());
                         seema = "Label";
-                        promptSpeechInput("A label to represent your note");
+                        if(from.equals("speech"))
+                            promptSpeechInput("A label to represent your note");
                         //addLabelEditText.setText(speak);
                         //while(speech==null);
 
@@ -235,7 +241,8 @@ public class AddNewLabel extends AppCompatActivity {
         //mic changes end
 
 */
-        addDescriptionEditText.callOnClick();
+        if(from.equals("speech"))
+            addDescriptionEditText.callOnClick();
         //Toast.makeText(AddNewLabel.this, "later Alligator", Toast.LENGTH_SHORT).show();
 
     }

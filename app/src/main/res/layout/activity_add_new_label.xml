@@ -74,13 +74,14 @@
                 android:background="#f88ba1"
                 android:layout_gravity="center_horizontal|bottom"
                 android:focusableInTouchMode="false"
-                android:focusable="false" />
+                android:focusable="false"
+                android:text="Add Note" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Enter label to &quot; &quot; the note"
+                android:text="Enter Label along with the note description"
                 android:id="@+id/addLabelMessage"
                 android:layout_centerHorizontal="true"
                 android:textColor="#000000"
