@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
                     if (status != TextToSpeech.ERROR) {
                         t1.setLanguage(Locale.US);
 
-                        t1.speak("Welcome, I am FRIDAY, your personal Task Manager. Speak Up !! ", TextToSpeech.QUEUE_FLUSH, null);
+                        t1.speak("Welcome, I am FRIDAY, your personal Task Manager. How may I help you? ", TextToSpeech.QUEUE_FLUSH, null);
 
                     } //here ^^
                 }
