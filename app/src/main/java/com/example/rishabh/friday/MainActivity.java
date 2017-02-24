@@ -2,15 +2,22 @@ package com.example.rishabh.friday;
 
 
 import android.content.ActivityNotFoundException;
+import android.app.FragmentManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -32,12 +39,39 @@ public class MainActivity extends AppCompatActivity {
     private String from= "button";
     private EditText searchEditText;
 
+    //sidebar changes
+    private ArrayAdapter<String> mAdapter;
+    private DrawerLayout mDrawerLayout;
+    private ListView mDrawerList;
+    private ActionBarDrawerToggle mDrawerToggle;
+    private String mActivityTitle;
+    //sidebar changes end
+
+
+
     MyDBHandler myDB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //sidebar changes
+        mDrawerList = (ListView)findViewById(R.id.navList);
+        mDrawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
+        mActivityTitle = getTitle().toString();
+        addDrawerItems();
+        setupDrawer();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+
+        //sidebar changes end
+
+
+
+
+//mic changes begin
+        txtSpeechInput = (TextView) findViewById(R.id.txtSpeechInput);
 
         btnSpeak = (ImageButton) findViewById(R.id.btnSpeak);
         btnSpeak.setOnClickListener(new View.OnClickListener() {
@@ -47,6 +81,11 @@ public class MainActivity extends AppCompatActivity {
                 promptSpeechInput();
             }
         });
+
+
+//mic changes end
+
+
 
         //THE SEARCH EDIT TEXT
         final String nullcheck = "";// A NULL STRING
@@ -177,7 +216,74 @@ public class MainActivity extends AppCompatActivity {
 
         );
 
+
+
+
+
     }
+
+
+    //sidebar changes
+    private void addDrawerItems() {
+        String[] osArray = { "Notes", "Reminders", "Checklist" };
+        mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, osArray);
+        mDrawerList.setAdapter(mAdapter);
+
+        mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                if(position==0) {
+                    Intent intent = new Intent(MainActivity.this, MainActivity.class);
+                    startActivity(intent);
+
+                }
+                else if(position==1){
+                    Intent intent = new Intent(MainActivity.this, ToActivity.class);
+                    startActivity(intent);
+                }
+                else{
+
+                    Toast.makeText(MainActivity.this, "You have Not Created anything for this!Remember!!!", Toast.LENGTH_SHORT).show();
+
+                }
+
+
+                //Toast.makeText(MainActivity.this, "Note yet done!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+    }
+
+
+
+    private void setupDrawer() {
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.drawer_open, R.string.drawer_close) {
+
+            /** Called when a drawer has settled in a completely open state. */
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                getSupportActionBar().setTitle("Navigation!");
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+
+            /** Called when a drawer has settled in a completely closed state. */
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+                getSupportActionBar().setTitle(mActivityTitle);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+        };
+
+        mDrawerToggle.setDrawerIndicatorEnabled(true);
+         mDrawerLayout.addDrawerListener(mDrawerToggle);
+    }
+    //sidebar changes ends
+
+
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -197,6 +303,13 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         }
+
+
+        //sidebar changes
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        //sidebar changes ends
 
         return super.onOptionsItemSelected(item);
     }

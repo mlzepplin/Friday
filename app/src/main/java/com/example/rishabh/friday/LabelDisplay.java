@@ -16,6 +16,7 @@ public class LabelDisplay extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_label_display);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent incomingIntent = getIntent();
         final String label = incomingIntent.getStringExtra("label");
@@ -52,6 +53,11 @@ public class LabelDisplay extends AppCompatActivity {
             return true;
         }
 
-        return super.onOptionsItemSelected(item);
-    }
+
+        onBackPressed();
+        return true;
+
+        }
+
 }
+
