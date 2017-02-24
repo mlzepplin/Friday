@@ -1,26 +1,34 @@
 package com.example.rishabh.friday;
 
 
+import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -47,7 +55,8 @@ public class MainActivity extends AppCompatActivity {
     private String mActivityTitle;
     //sidebar changes end
 
-
+    private float lastTranslate = 0.0f;
+    private FrameLayout frame;
 
     MyDBHandler myDB;
 
@@ -61,14 +70,14 @@ public class MainActivity extends AppCompatActivity {
         mDrawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
         mActivityTitle = getTitle().toString();
         addDrawerItems();
+
+
         setupDrawer();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
+
         //sidebar changes end
-
-
-
 
 //mic changes begin
         //txtSpeechInput = (TextView) findViewById(R.id.txtSpeechInput);
@@ -261,26 +270,54 @@ public class MainActivity extends AppCompatActivity {
     private void setupDrawer() {
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.drawer_open, R.string.drawer_close) {
 
+
+           /*
+            @SuppressLint("NewApi")
+            public void onDrawerSlide(View drawerView, float slideOffset)
+            {
+                super.onDrawerSlide(drawerView, slideOffset);
+                float moveFactor = (mDrawerList.getWidth() * slideOffset);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+                {
+                    frame.setTranslationX(moveFactor);
+                }
+                else
+                {
+                    TranslateAnimation anim = new TranslateAnimation(lastTranslate, moveFactor, 0.0f, 0.0f);
+                    anim.setDuration(0);
+                    anim.setFillAfter(true);
+                    frame.startAnimation(anim);
+
+                    lastTranslate = moveFactor;
+                }
+
+
+            }
+
+            */
             /** Called when a drawer has settled in a completely open state. */
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                getSupportActionBar().setTitle("Navigation!");
+                getSupportActionBar().setTitle("Menu");
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+                mDrawerToggle.syncState();
             }
 
             /** Called when a drawer has settled in a completely closed state. */
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
                 getSupportActionBar().setTitle(mActivityTitle);
+
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+                mDrawerToggle.syncState();
             }
         };
 
         mDrawerToggle.setDrawerIndicatorEnabled(true);
          mDrawerLayout.addDrawerListener(mDrawerToggle);
+
     }
     //sidebar changes ends
-
 
 
 
@@ -330,6 +367,22 @@ public class MainActivity extends AppCompatActivity {
                     Toast.LENGTH_SHORT).show();
         }
     }
+
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // Pass any configuration change to the drawer toggls
+        mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

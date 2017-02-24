@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -14,23 +13,24 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <android.support.v7.widget.CardView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/card_view"
+            android:layout_margin="5dp"
+            card_view:cardBackgroundColor="#81C784"
+            card_view:cardCornerRadius="12dp"
+            card_view:cardElevation="3dp"
+            card_view:contentPadding="4dp"
+            android:foreground="?selectableItemBackground"
+            android:clickable="true" >
 
 
-    <android.support.v7.widget.CardView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:card_view="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/card_view"
-        android:layout_margin="5dp"
-        card_view:cardBackgroundColor="#81C784"
-        card_view:cardCornerRadius="12dp"
-        card_view:cardElevation="3dp"
-        card_view:contentPadding="4dp"
-        android:foreground="?selectableItemBackground"
-        android:clickable="true" >
 
-    <RelativeLayout
+
+        <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".MainActivity"
@@ -49,6 +49,7 @@
                 android:id="@+id/labelsScrollView"
                 >
             </ScrollView>
+
             <ListView
                 android:layout_width="fill_parent"
                 android:layout_height="match_parent"
@@ -132,8 +133,7 @@
 
     </RelativeLayout>
 
-    </android.support.v7.widget.CardView>
-
+        </android.support.v7.widget.CardView>
 
         <ListView
             android:id="@+id/navList"
