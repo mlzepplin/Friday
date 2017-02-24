@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 //mic changes begin
-        txtSpeechInput = (TextView) findViewById(R.id.txtSpeechInput);
+        //txtSpeechInput = (TextView) findViewById(R.id.txtSpeechInput);
 
         btnSpeak = (ImageButton) findViewById(R.id.btnSpeak);
         btnSpeak.setOnClickListener(new View.OnClickListener() {
