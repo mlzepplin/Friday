@@ -3,19 +3,22 @@ package com.example.rishabh.friday;
 
 import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
-import android.app.FragmentManager;
-import android.content.Context;
 import android.content.Intent;
+
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
+import android.speech.tts.TextToSpeech;
 import android.support.design.widget.FloatingActionButton;
+
 import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
+
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -24,14 +27,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -46,6 +47,9 @@ public class MainActivity extends AppCompatActivity {
     private String flag= "INACTIVE";
     private String from= "button";
     private EditText searchEditText;
+    private int counter = 0;
+
+    private TextToSpeech t1;
 
     //sidebar changes
     private ArrayAdapter<String> mAdapter;
@@ -90,12 +94,25 @@ public class MainActivity extends AppCompatActivity {
                 promptSpeechInput();
             }
         });
-
-
+        counter = 0;
+        Intent intent = getIntent();
 //mic changes end
+        counter = intent.getIntExtra("counter",0);
+        System.out.println(counter);
+        if(counter<1) {
 
+            t1 = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+                public void onInit(int status) {
+                    if (status != TextToSpeech.ERROR) {
+                        t1.setLanguage(Locale.US);
 
+                        t1.speak("Welcome, I am FRIDAY, your personal Task Manager. How may I help you? ", TextToSpeech.QUEUE_FLUSH, null);
 
+                    } //here ^^
+                }
+            });
+        }
+        counter++;
         //THE SEARCH EDIT TEXT
         final String nullcheck = "";// A NULL STRING
         searchEditText = (EditText)findViewById(R.id.searchEditText);
@@ -124,12 +141,15 @@ public class MainActivity extends AppCompatActivity {
 
                             boolean exists = myDB.searchLabel(searchEditText.getText().toString());
 
+                            System.out.println(searchEditText.getText().toString());
+
                             if (exists) {
 
                                 // TOAST
                                 Toast.makeText(MainActivity.this, "Label already exists" , Toast.LENGTH_LONG).show();
                                 Intent launchLabelDisplayIntent = new Intent(MainActivity.this, LabelDisplay.class);
                                 launchLabelDisplayIntent.putExtra("label", searchEditText.getText().toString());
+                                launchLabelDisplayIntent.putExtra("counter",counter);
                                 startActivity(launchLabelDisplayIntent);
 
 
@@ -137,6 +157,8 @@ public class MainActivity extends AppCompatActivity {
                             else {
                                 //new label ACTIVITY LAUNCHED
                                 Intent launchAddNewLabelIntent = new Intent(MainActivity.this, AddNewLabel.class);
+                                launchAddNewLabelIntent.putExtra("from",from);
+                                launchAddNewLabelIntent.putExtra("counter",counter);
                                 startActivity(launchAddNewLabelIntent);
                             }
                         }
@@ -166,9 +188,15 @@ public class MainActivity extends AppCompatActivity {
                     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 
                         String label = String.valueOf(parent.getItemAtPosition(position));
-                        Intent launchWordListIntent = new Intent(MainActivity.this, LabelDisplay.class);
-                        launchWordListIntent.putExtra("label", label);
-                        startActivity(launchWordListIntent);
+                        //Intent launchWordListIntent = new Intent(MainActivity.this, LabelDisplay.class);
+                        //launchWordListIntent.putExtra("label", label);
+                        //launchWordListIntent.putExtra("counter",counter);
+                        //startActivity(launchWordListIntent);
+                        myDB.deleteLabel(label) ;
+                        Intent refresh = new Intent(MainActivity.this, MainActivity.class);
+                        refresh.putExtra("counter",counter);
+                        startActivity(refresh);
+                        finish();
 
                         return true;
                     }
@@ -187,6 +215,7 @@ public class MainActivity extends AppCompatActivity {
                         String label = String.valueOf(parent.getItemAtPosition(position));
                         Intent launchWordListIntent = new Intent(MainActivity.this, LabelDisplay.class);
                         launchWordListIntent.putExtra("label", label);
+                        launchWordListIntent.putExtra("counter",counter);
                         startActivity(launchWordListIntent);
 
                     }
@@ -216,6 +245,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                         if(exists || from.equals("new") || from.equals("button")) {
                             launchAddNewLabelIntent.putExtra("from",from);
+                            launchAddNewLabelIntent.putExtra("counter",counter);
                             startActivity(launchAddNewLabelIntent);
                         }
                     }
@@ -244,11 +274,13 @@ public class MainActivity extends AppCompatActivity {
 
                 if(position==0) {
                     Intent intent = new Intent(MainActivity.this, MainActivity.class);
+                    intent.putExtra("counter",counter);
                     startActivity(intent);
 
                 }
                 else if(position==1){
                     Intent intent = new Intent(MainActivity.this, ToActivity.class);
+                    intent.putExtra("counter",counter);
                     startActivity(intent);
                 }
                 else{
@@ -361,6 +393,7 @@ public class MainActivity extends AppCompatActivity {
                 "Speak!!");
         try {
             startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
+            intent.putExtra("counter", counter);
         } catch (ActivityNotFoundException a) {
             Toast.makeText(getApplicationContext(),
                     "speech_not_supported",
@@ -433,13 +466,17 @@ public class MainActivity extends AppCompatActivity {
         }
         else if(com.matches("(.*)search(.*)") || com.matches("(.*)Search(.*)") || com.matches("(.*)SEARCH(.*)")) {
             String[] newString= com.split("search ");
+            System.out.println("point 1");
             searchEditText.setText(newString[1]);
+            System.out.println("point 2");
+            from = "new";
             searchButton.callOnClick();
         }
         else if(com.matches("(.*)delete(.*)") || com.matches("(.*)Delete(.*)") || com.matches("(.*)DELETE(.*)")) {
             String[] newString= com.split("delete ");
             myDB.deleteLabel(newString[1]);
             Intent refresh = new Intent(this, MainActivity.class);
+            refresh.putExtra("counter",counter);
             startActivity(refresh);
             finish();
         }
