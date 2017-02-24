@@ -35,6 +35,8 @@ public class AddNewLabel extends AppCompatActivity {
     private String seema;
     private SpeechListener speech ;
     private String speak;
+    private String from;
+    private String edit;
 
 
 
@@ -52,34 +54,27 @@ public class AddNewLabel extends AppCompatActivity {
         //making the textView scrollable
         addDescriptionEditText.setMovementMethod(new ScrollingMovementMethod());
 
-        myDB = new MyDBHandler(this);
-        // db = openOrCreateDatabase("imeanDB", Context.MODE_PRIVATE,null);
-        //db.execSQL("DROP TABLE IF EXISTS words");
-        //db.execSQL("CREATE TABLE IF NOT EXISTS words(_word VARCHAR, _meaning VARCHAR, _label VARCHAR);");
+        Intent intent = getIntent();
+        from = intent.getStringExtra("from");
+        edit = intent.getStringExtra("EDIT");
 
-        //meaningTextView.setText(newMeaning);
+        myDB = new MyDBHandler(this);
+
+
+        if(edit != null) {
+            addLabelEditText.setText(edit);
+            addDescriptionEditText.setText(myDB.getDescription(edit));
+        }
 
         addDescriptionEditText.setOnClickListener(
                 new Button.OnClickListener() {
                     public void onClick(View view) {
 
-                        /*t1=new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
-                            public void onInit(int status) {
-
-                                //Toast.makeText(AddNewLabel.this, "in init", Toast.LENGTH_SHORT).show();
-                                if(status != TextToSpeech.ERROR) {
-                                    t1.setLanguage(Locale.US);
-                                    String toSpeak = "Please dictate the note";
-                                    t1.speak(toSpeak, TextToSpeech.QUEUE_FLUSH,null);
-
-                                } //here ^^
-                            }
-                        });*/
-                        //while(t1.isSpeaking());
                         seema = "Description";
-                        promptSpeechInput("Description of the note?");
-                        //addDescriptionEditText.setText(speak);
-
+                        if(from.equals("new"))
+                            promptSpeechInput("Description of the note?");
+                        else if(from.equals("edit"))
+                            promptSpeechInput("Speak the line to be appended..");
                     }
                 }
         );
@@ -87,28 +82,16 @@ public class AddNewLabel extends AppCompatActivity {
         addLabelEditText.setOnClickListener(
                 new Button.OnClickListener() {
                     public void onClick(View view) {
-                        /*t2=new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
-                            public void onInit(int status) {
 
-                                //Toast.makeText(AddNewLabel.this, "in init", Toast.LENGTH_SHORT).show();
-                                if(status != TextToSpeech.ERROR) {
-                                    t2.setLanguage(Locale.US);
-                                    String toSpeak = "Please dictate the note";
-                                    t2.speak(toSpeak, TextToSpeech.QUEUE_FLUSH,null);
-
-                                } //here ^^
-                            }
-                        });*/
-                        //while(t2.isSpeaking());
                         seema = "Label";
-                        promptSpeechInput("A label to represent your note");
-                        //addLabelEditText.setText(speak);
-                        //while(speech==null);
+                        if(from.equals("new"))
+                            promptSpeechInput("A label to represent your note");
+                        if(from.equals("edit"))
+                            promptSpeechInput("New label name?");
 
                     }
                 }
         );
-
 
         //EVENT HANDLING //question here
         addNoteButton.setOnClickListener(
@@ -118,163 +101,56 @@ public class AddNewLabel extends AppCompatActivity {
 
                     public void onClick(View view) {
 
-                        // TOAST
-                        //Toast.makeText(MeaningDisplay.this, "button clicked", Toast.LENGTH_SHORT).show();
 
-                        /*t3 = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+                        final  String label = addLabelEditText.getText().toString();
+                        String description = addDescriptionEditText.getText().toString();
+                        System.out.println(description);
+                        String type = "note";
+                        final String toSpeak;
+                        if(from.equals("edit")) {
+                            toSpeak = "Your note with label "+label+" has been updated";
+                            myDB.deleteLabel(label);
+                            myDB.insertLabel(type, description, label);
+                            System.out.println(myDB.getDescription(label));
+                        }
+                        else {
+                            if (nullCheck.equals(label)) {
+                                Toast.makeText(AddNewLabel.this, "must enter a label", Toast.LENGTH_LONG).show();
+                                toSpeak = "Label Empty";
+                            }
+                            else {
+                                myDB.insertLabel(type, description, label);
+                                toSpeak = "Your note has been saved with label "+label;
+                            }
+                        }
 
+                        t1=new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
                             public void onInit(int status) {
                                 if (status != TextToSpeech.ERROR) {
-                                    t3.setLanguage(Locale.US);
-                                    String toSpeak = "Do you want to save, YES or NO?";
-                                    t3.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
-                                }
+                                    t1.setLanguage(Locale.US);
+
+                                    t1.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
+
+                                } //here ^^
                             }
-                        });*/
-                        //while (t3.isSpeaking()) ;
-                        seema = "save";
-                        speak = null;
-                        //promptSpeechInput();
-                        //while (speak == null) ;
+                        });
 
-                        //if (speak.equalsIgnoreCase("yes")) {
-
-                            final  String label = addLabelEditText.getText().toString();
-                            String description = addDescriptionEditText.getText().toString();
-                            String type = "note";
-                            if (nullCheck.equals(label)) {
-
-                                Toast.makeText(AddNewLabel.this, "must enter a label", Toast.LENGTH_LONG).show();
-                            } else {
-                                myDB.insertLabel(type, description, label);
-                                //db.execSQL("INSERT INTO words(_word, _meaning, _label) VALUES('"+search+"','"+newLabel+"','"+newMeaning+"');");
-
-                                t1=new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
-                                    public void onInit(int status) {
-
-                                        Toast.makeText(AddNewLabel.this, "in init", Toast.LENGTH_SHORT).show();
-                                        if (status != TextToSpeech.ERROR) {
-                                            t1.setLanguage(Locale.US);
-                                            String toSpeak = "Your note has been saved with label "+label;
-                                            t1.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
-
-                                        } //here ^^
-                                    }
-                                });
-                                //while(t1.isSpeaking());
-                                Intent launchLabelListIntent = new Intent(AddNewLabel.this, MainActivity.class);
-                                startActivity(launchLabelListIntent);
-                            }
-                        //Database();
-                        // Toast.makeText(MeaningDisplay.this, "word added", Toast.LENGTH_SHORT).show();
-                        //}
+                        Intent launchLabelListIntent = new Intent(AddNewLabel.this, MainActivity.class);
+                        startActivity(launchLabelListIntent);
 
                     }
-
-
                 }
         );
-        //mic changes begin
-        /*t1=new TextToSpeech(this.getApplicationContext(), new TextToSpeech.OnInitListener() {
-            public void onInit(int status) {
 
-                Toast.makeText(AddNewLabel.this, "in init", Toast.LENGTH_SHORT).show();
-                if(status != TextToSpeech.ERROR) {
-                    t1.setLanguage(Locale.US);
-                    String toSpeak = "Please dictate the note";
-                   t1.speak(toSpeak, TextToSpeech.QUEUE_FLUSH,null);
-
-                } //here ^^
-            }
-        });*/
-        //System.out.println(flag);
-        //promptSpeechInput();
-        //System.out.println(flag);
-        //while(flag.equals("ACTIVE"));
-        //System.out.println(flag);
-
-
-        /*System.out.println("aa rha hai yahan? "+speech);
-
-        if(speech != null) {
-            addDescriptionEditText.setText(speech);
-            //promptSpeechInput();
-            t2=new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
-
-                public void onInit(int status) {
-                    if(status != TextToSpeech.ERROR) {
-                        t2.setLanguage(Locale.US);
-                        String toSpeak = "Please state the label name";
-                        t2.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
-                    }
-                }
-            });
-            //t1 = null;
-            //speech = null;
-            promptSpeechInput();
-            while(flag.equals("ACTIVE"));
-            addLabelEditText.setText(speech);
-            t3=new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
-
-                public void onInit(int status) {
-                    if(status != TextToSpeech.ERROR) {
-                        t3.setLanguage(Locale.US);
-                        String toSpeak = "Do you want to save, YES or NO?";
-                        t3.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
-                    }
-                }
-            });
-            //speech = null;
-            promptSpeechInput();
-            while(flag.equals("ACTIVE"));
-            if(speech.equalsIgnoreCase("yes"))
-                addNoteButton.callOnClick();
-
-        }
-
-        //mic changes end
-
-*/
-        addDescriptionEditText.callOnClick();
-        //Toast.makeText(AddNewLabel.this, "later Alligator", Toast.LENGTH_SHORT).show();
+        if(from.equals("new") || from.equals("edit"))
+            addDescriptionEditText.callOnClick();
 
     }
-
-    /*public void printDatabase(){
-        //Toast.makeText(MeaningDisplay.this, "edsaafafa", Toast.LENGTH_SHORT).show();
-        Cursor c=m.rawQuery("SELECT * FROM words", null);
-        if(c.getCount()==0)
-        {
-            Toast.makeText(MeaningDisplay.this, "error,no word found", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        StringBuffer buffer=new StringBuffer();
-        while(c.moveToNext())
-        {
-            buffer.append(c.getString(0)+" ");
-            buffer.append(c.getString(1)+" ");
-            buffer.append(c.getString(2)+"\n");
-        }
-        meaningTextView.setText(buffer);
-        addLabelEditText.setText("");
-    }*/
-
-   /* public void addButtonCLicked(View view){
-        WordsAndLabels wordNew = new WordsAndLabels(meaningTextView.getText().toString());
-        dbHandler.addRow(wordNew);
-    }*/
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-
-        /*
-        getMenuInflater().inflate(R.menu.menu_meaning_display, menu);
-        */
         return true;
-
     }
 
     @Override
@@ -291,115 +167,6 @@ public class AddNewLabel extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
-    /* //FOR BRINGING IN MEANING
-    public class AsyncHttpTask extends AsyncTask<String, Void, Integer> {
-
-
-        @Override
-        protected Integer doInBackground(String... params) {
-            InputStream inputStream = null;
-
-            HttpURLConnection urlConnection = null;
-
-            Integer result = 0;
-            try {
-                //forming th java.net.URL object
-                URL url = new URL(params[0]);
-
-                urlConnection = (HttpURLConnection) url.openConnection();
-
-                 //optional request header
-                urlConnection.setRequestProperty("Content-Type", "application/json");
-
-                // optional request header
-                urlConnection.setRequestProperty("Accept", "application/json");
-
-                // for Get request
-                urlConnection.setRequestMethod("GET");
-
-                int statusCode = urlConnection.getResponseCode();
-
-                // 200 represents HTTP OK
-                if (statusCode ==  200) {
-
-                    inputStream = new BufferedInputStream(urlConnection.getInputStream());
-
-                    String response = convertInputStreamToString(inputStream);
-
-                    parseResult(response);
-
-                    result = 1; // Successful
-
-                }else{
-                    result = 0; //"Failed to fetch data!";
-                }
-
-            } catch (Exception e) {
-                Log.d(TAG, e.getLocalizedMessage());
-            }
-
-            return result; //"Failed to fetch data!";
-        }
-
-
-        @Override
-        protected void onPostExecute(Integer result) {
-            // Download complete. Lets update UI
-
-            if(result == 1){
-
-                //arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, newMeaning);
-
-                meaningTextView.setText(newMeaning);
-            }else{
-                Log.e(TAG, "Failed to fetch data!");
-            }
-        }
-
-
-        private String convertInputStreamToString(InputStream inputStream) throws IOException {
-
-            BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
-
-            String line = "";
-            String result = "";
-
-            while((line = bufferedReader.readLine()) != null){
-                result += line;
-            }
-
-            // Close Stream
-            if(null!=inputStream){
-                inputStream.close();
-            }
-
-            return result;
-        }
-        private void parseResult(String result) {
-
-            try{
-                JSONArray response = new JSONArray(result);
-                newMeaning = new String();
-
-                for (int i = 0; i < response.length(); i++) {
-                    JSONObject definition = response.getJSONObject(i);
-                    if(i==0) {
-                        newMeaning = definition.getString("text") + "\n\n";
-                    }
-                    else{
-                        newMeaning = newMeaning + definition.getString("text") + "\n\n";
-                    }
-
-                }
-
-
-            }catch (JSONException e){
-                e.printStackTrace();
-            }
-        }
-    }
-    */
 
     private void beginInput() {
 
@@ -426,7 +193,6 @@ public class AddNewLabel extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         ArrayList<String> result;
-        //speech = null;
         System.out.println("Speech Result returned");
         switch (requestCode) {
             case REQ_CODE_SPEECH_INPUT: {
@@ -438,24 +204,30 @@ public class AddNewLabel extends AppCompatActivity {
                             .getFloatArrayExtra(RecognizerIntent.EXTRA_CONFIDENCE_SCORES);
                     try {
 
-                        //String toSpeak = result.get(0);
-                        //t1.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
-                        //txtSpeechInput.setText(result.get(0));
-                        /*Toast.makeText(getApplicationContext(),
-                                result.get(0),
-                                Toast.LENGTH_SHORT).show();*/
                         speak = result.get(0);
-                        switch(seema) {
-                            case "Description": addDescriptionEditText.setText(speak);
-                                addLabelEditText.callOnClick();
-                                break;
-                            case "Label": addLabelEditText.setText(speak);
-                                addNoteButton.callOnClick();
-                                break;
+                        if(from.equals("new")) {
+                            switch (seema) {
+                                case "Description":
+                                    addDescriptionEditText.setText(speak);
+                                    addLabelEditText.callOnClick();
+                                    break;
+                                case "Label":
+                                    addLabelEditText.setText(speak);
+                                    addNoteButton.callOnClick();
+                                    break;
 
+                            }
                         }
-
-                        //findCommand(result.get(0));
+                        else if(from.equals("edit")) {
+                            switch (seema) {
+                                case "Description":
+                                    String temp = addDescriptionEditText.getText().toString();
+                                    temp = temp + "\n" + speak;
+                                    addDescriptionEditText.setText(temp);
+                                    addNoteButton.callOnClick();
+                                    break;
+                            }
+                        }
                     }
                     catch(NullPointerException ne) {
                         Toast.makeText(getApplicationContext(),

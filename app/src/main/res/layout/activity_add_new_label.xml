@@ -76,15 +76,21 @@
                 android:layout_gravity="center_horizontal|bottom"
                 android:focusableInTouchMode="false"
                 android:focusable="false"
+
                 android:text="ADD"
                 tools:text="ADD"
                 android:contentDescription="ADD" />
+
+                android:text="Add Note" />
+
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
+
                 android:text="Enter label "
+
                 android:id="@+id/addLabelMessage"
                 android:layout_centerHorizontal="true"
                 android:textColor="#000000"

@@ -29,20 +29,15 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Locale;
 
-//mic changes begin
-//mic changes end
-
 public class MainActivity extends AppCompatActivity {
 
-
-    //mic changes begin
-    private TextView txtSpeechInput;
     private ImageButton btnSpeak;
+    private Button searchButton;
     private FloatingActionButton fab;
     private final int REQ_CODE_SPEECH_INPUT = 100;
     private String flag= "INACTIVE";
-
-    //mic changes end
+    private String from= "button";
+    private EditText searchEditText;
 
     //sidebar changes
     private ArrayAdapter<String> mAdapter;
@@ -77,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
 //mic changes begin
         txtSpeechInput = (TextView) findViewById(R.id.txtSpeechInput);
+
         btnSpeak = (ImageButton) findViewById(R.id.btnSpeak);
         btnSpeak.setOnClickListener(new View.OnClickListener() {
 
@@ -86,17 +82,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
 //mic changes end
+
 
 
         //THE SEARCH EDIT TEXT
         final String nullcheck = "";// A NULL STRING
-        final EditText searchEditText = (EditText)findViewById(R.id.searchEditText);
+        searchEditText = (EditText)findViewById(R.id.searchEditText);
 
 
 
         //SEARCH BUTTON
-        Button searchButton = (Button)findViewById(R.id.searchButton);
+        searchButton = (Button)findViewById(R.id.searchButton);
         //EVENT HANDLING
 
         searchButton.setOnClickListener(
@@ -130,7 +128,6 @@ public class MainActivity extends AppCompatActivity {
                             else {
                                 //new label ACTIVITY LAUNCHED
                                 Intent launchAddNewLabelIntent = new Intent(MainActivity.this, AddNewLabel.class);
-                                //launchMeaningIntent.putExtra("search", searchEditText.getText().toString());
                                 startActivity(launchAddNewLabelIntent);
                             }
                         }
@@ -139,8 +136,6 @@ public class MainActivity extends AppCompatActivity {
 
                 }
         );
-
-        //String[] labels = {"positive words","negative words","harsh words","physical description"};
 
         myDB = new MyDBHandler(this);
 
@@ -153,8 +148,6 @@ public class MainActivity extends AppCompatActivity {
 
         ListView labelsListView = (ListView)findViewById(R.id.labelsListView);
         labelsListView.setAdapter(labelsAdapter);
-
-
 
         //LONG CLICK LISTENER
         labelsListView.setOnItemLongClickListener(
@@ -202,16 +195,27 @@ public class MainActivity extends AppCompatActivity {
 
                     public void onClick(View v) {
 
-                        //ADD NEW LABEL ACTIVITY LAUNCHED
+
+                        boolean exists = myDB.searchLabel(searchEditText.getText().toString());
+                        System.out.println(searchEditText.getText().toString());
                         Intent launchAddNewLabelIntent = new Intent(MainActivity.this, AddNewLabel.class);
-                        //launchAddNewLabelIntent.putExtra("search", searchEditText.getText().toString());
-                        startActivity(launchAddNewLabelIntent);
+                        if (exists) {
+
+                            String msg=searchEditText.getText().toString();
+                            System.out.println("Sending this to the intent "+msg);
+                            launchAddNewLabelIntent.putExtra("EDIT", msg);
+                        }
+                        if(exists || from.equals("new") || from.equals("button")) {
+                            launchAddNewLabelIntent.putExtra("from",from);
+                            startActivity(launchAddNewLabelIntent);
+                        }
                     }
 
                 }
 
 
         );
+
 
 
 
@@ -248,6 +252,7 @@ public class MainActivity extends AppCompatActivity {
                 //Toast.makeText(MainActivity.this, "Note yet done!", Toast.LENGTH_SHORT).show();
             }
         });
+
 
     }
 
@@ -309,7 +314,6 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    //mic changes begin
     private void promptSpeechInput() {
 
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
@@ -331,33 +335,32 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         System.out.println("111111");
-        switch (requestCode) {
-            case REQ_CODE_SPEECH_INPUT: {
-                System.out.println("222222 "+resultCode+" "+data.toString());
-                if (resultCode == RESULT_OK && null != data) {
+        if(null != data) {
+            switch (requestCode) {
+                case REQ_CODE_SPEECH_INPUT: {
                     System.out.println("222222 "+resultCode+" "+data.toString());
-                    ArrayList<String> result = data
-                            .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-                    float[] confidence = data
-                            .getFloatArrayExtra(RecognizerIntent.EXTRA_CONFIDENCE_SCORES);
-                    try {
+                    if (resultCode == RESULT_OK && null != data) {
+                        System.out.println("222222 "+resultCode+" "+data.toString());
+                        ArrayList<String> result = data
+                                .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                        float[] confidence = data
+                                .getFloatArrayExtra(RecognizerIntent.EXTRA_CONFIDENCE_SCORES);
+                        try {
 
-                        //String toSpeak = result.get(0);
-                        //t1.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
-                        //txtSpeechInput.setText(result.get(0));
-                        Toast.makeText(getApplicationContext(),
-                                result.get(0),
-                                Toast.LENGTH_SHORT).show();
-                        findCommand(result.get(0));
+                            Toast.makeText(getApplicationContext(),
+                                    result.get(0),
+                                    Toast.LENGTH_SHORT).show();
+                            findCommand(result.get(0));
+                        }
+                        catch(NullPointerException ne) {
+                            Toast.makeText(getApplicationContext(),
+                                    "No detection !!!",
+                                    Toast.LENGTH_SHORT).show();
+                        }
                     }
-                    catch(NullPointerException ne) {
-                        Toast.makeText(getApplicationContext(),
-                                "No detection !!!",
-                                Toast.LENGTH_SHORT).show();
-                    }
+                    flag = "INACTIVE";
+                    break;
                 }
-                flag = "INACTIVE";
-                break;
             }
         }
         System.out.println("333333");
@@ -365,10 +368,29 @@ public class MainActivity extends AppCompatActivity {
 
     public void findCommand(String com) {
 
-        if(com.matches("(.*)note(.*)") || com.matches("(.*)Note(.*)") || com.matches("(.*)NOTE(.*)"))
+        if(com.matches("(.*)note(.*)") || com.matches("(.*)Note(.*)") || com.matches("(.*)NOTE(.*)")) {
+            from = "new";
             fab.callOnClick();
+        }
+        else if(com.matches("(.*)edit(.*)") || com.matches("(.*)Edit(.*)") || com.matches("(.*)EDIT(.*)")) {
+            String[] newString= com.split("edit ");
+            searchEditText.setText(newString[1]);
+            from = "edit";
+            fab.callOnClick();
+        }
+        else if(com.matches("(.*)search(.*)") || com.matches("(.*)Search(.*)") || com.matches("(.*)SEARCH(.*)")) {
+            String[] newString= com.split("search ");
+            searchEditText.setText(newString[1]);
+            searchButton.callOnClick();
+        }
+        else if(com.matches("(.*)delete(.*)") || com.matches("(.*)Delete(.*)") || com.matches("(.*)DELETE(.*)")) {
+            String[] newString= com.split("delete ");
+            myDB.deleteLabel(newString[1]);
+            Intent refresh = new Intent(this, MainActivity.class);
+            startActivity(refresh);
+            finish();
+        }
 
     }
-    // mic changes end
 }
 

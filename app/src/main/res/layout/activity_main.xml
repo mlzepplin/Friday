@@ -98,10 +98,12 @@
                 android:layout_height="match_parent"
                 tools:layout_height="50dp">
 
+
                 <TextView
                     android:layout_width="300dp"
                     android:layout_height="match_parent"
                     android:id="@+id/txtSpeechInput" />
+
             </FrameLayout>
 
             <Button
