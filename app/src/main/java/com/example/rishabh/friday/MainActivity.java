@@ -89,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = getIntent();
 //mic changes end
         counter = intent.getIntExtra("counter",0);
+        System.out.println(counter);
         if(counter<1) {
 
             t1 = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
@@ -139,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
                                 Toast.makeText(MainActivity.this, "Label already exists" , Toast.LENGTH_LONG).show();
                                 Intent launchLabelDisplayIntent = new Intent(MainActivity.this, LabelDisplay.class);
                                 launchLabelDisplayIntent.putExtra("label", searchEditText.getText().toString());
+                                launchLabelDisplayIntent.putExtra("counter",counter);
                                 startActivity(launchLabelDisplayIntent);
 
 
@@ -147,6 +149,7 @@ public class MainActivity extends AppCompatActivity {
                                 //new label ACTIVITY LAUNCHED
                                 Intent launchAddNewLabelIntent = new Intent(MainActivity.this, AddNewLabel.class);
                                 launchAddNewLabelIntent.putExtra("from",from);
+                                launchAddNewLabelIntent.putExtra("counter",counter);
                                 startActivity(launchAddNewLabelIntent);
                             }
                         }
@@ -178,6 +181,7 @@ public class MainActivity extends AppCompatActivity {
                         String label = String.valueOf(parent.getItemAtPosition(position));
                         Intent launchWordListIntent = new Intent(MainActivity.this, LabelDisplay.class);
                         launchWordListIntent.putExtra("label", label);
+                        launchWordListIntent.putExtra("counter",counter);
                         startActivity(launchWordListIntent);
 
                         return true;
@@ -197,6 +201,7 @@ public class MainActivity extends AppCompatActivity {
                         String label = String.valueOf(parent.getItemAtPosition(position));
                         Intent launchWordListIntent = new Intent(MainActivity.this, LabelDisplay.class);
                         launchWordListIntent.putExtra("label", label);
+                        launchWordListIntent.putExtra("counter",counter);
                         startActivity(launchWordListIntent);
 
                     }
@@ -226,6 +231,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                         if(exists || from.equals("new") || from.equals("button")) {
                             launchAddNewLabelIntent.putExtra("from",from);
+                            launchAddNewLabelIntent.putExtra("counter",counter);
                             startActivity(launchAddNewLabelIntent);
                         }
                     }
@@ -254,11 +260,13 @@ public class MainActivity extends AppCompatActivity {
 
                 if(position==0) {
                     Intent intent = new Intent(MainActivity.this, MainActivity.class);
+                    intent.putExtra("counter",counter);
                     startActivity(intent);
 
                 }
                 else if(position==1){
                     Intent intent = new Intent(MainActivity.this, ToActivity.class);
+                    intent.putExtra("counter",counter);
                     startActivity(intent);
                 }
                 else{
@@ -343,6 +351,7 @@ public class MainActivity extends AppCompatActivity {
                 "Speak!!");
         try {
             startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
+            intent.putExtra("counter",counter);
         } catch (ActivityNotFoundException a) {
             Toast.makeText(getApplicationContext(),
                     "speech_not_supported",
@@ -409,6 +418,7 @@ public class MainActivity extends AppCompatActivity {
             String[] newString= com.split("delete ");
             myDB.deleteLabel(newString[1]);
             Intent refresh = new Intent(this, MainActivity.class);
+            refresh.putExtra("counter",counter);
             startActivity(refresh);
             finish();
         }
