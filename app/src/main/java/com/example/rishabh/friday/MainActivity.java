@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
+import android.speech.tts.TextToSpeech;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
@@ -38,6 +39,9 @@ public class MainActivity extends AppCompatActivity {
     private String flag= "INACTIVE";
     private String from= "button";
     private EditText searchEditText;
+    private int counter = 0;
+
+    private TextToSpeech t1;
 
     //sidebar changes
     private ArrayAdapter<String> mAdapter;
@@ -81,12 +85,24 @@ public class MainActivity extends AppCompatActivity {
                 promptSpeechInput();
             }
         });
-
-
+        counter = 0;
+        Intent intent = getIntent();
 //mic changes end
+        counter = intent.getIntExtra("counter",0);
+        if(counter<1) {
 
+            t1 = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+                public void onInit(int status) {
+                    if (status != TextToSpeech.ERROR) {
+                        t1.setLanguage(Locale.US);
 
+                        t1.speak("Welcome, I am FRIDAY, your personal Task Manager. Speak Up !! ", TextToSpeech.QUEUE_FLUSH, null);
 
+                    } //here ^^
+                }
+            });
+        }
+        counter++;
         //THE SEARCH EDIT TEXT
         final String nullcheck = "";// A NULL STRING
         searchEditText = (EditText)findViewById(R.id.searchEditText);
@@ -115,6 +131,8 @@ public class MainActivity extends AppCompatActivity {
 
                             boolean exists = myDB.searchLabel(searchEditText.getText().toString());
 
+                            System.out.println(searchEditText.getText().toString());
+
                             if (exists) {
 
                                 // TOAST
@@ -128,6 +146,7 @@ public class MainActivity extends AppCompatActivity {
                             else {
                                 //new label ACTIVITY LAUNCHED
                                 Intent launchAddNewLabelIntent = new Intent(MainActivity.this, AddNewLabel.class);
+                                launchAddNewLabelIntent.putExtra("from",from);
                                 startActivity(launchAddNewLabelIntent);
                             }
                         }
@@ -380,7 +399,10 @@ public class MainActivity extends AppCompatActivity {
         }
         else if(com.matches("(.*)search(.*)") || com.matches("(.*)Search(.*)") || com.matches("(.*)SEARCH(.*)")) {
             String[] newString= com.split("search ");
+            System.out.println("point 1");
             searchEditText.setText(newString[1]);
+            System.out.println("point 2");
+            from = "new";
             searchButton.callOnClick();
         }
         else if(com.matches("(.*)delete(.*)") || com.matches("(.*)Delete(.*)") || com.matches("(.*)DELETE(.*)")) {
