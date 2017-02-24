@@ -2,15 +2,11 @@ package com.example.rishabh.friday;
 
 
 import android.content.ActivityNotFoundException;
-import android.app.FragmentManager;
-import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -18,13 +14,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -179,10 +173,15 @@ public class MainActivity extends AppCompatActivity {
                     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 
                         String label = String.valueOf(parent.getItemAtPosition(position));
-                        Intent launchWordListIntent = new Intent(MainActivity.this, LabelDisplay.class);
-                        launchWordListIntent.putExtra("label", label);
-                        launchWordListIntent.putExtra("counter",counter);
-                        startActivity(launchWordListIntent);
+                        //Intent launchWordListIntent = new Intent(MainActivity.this, LabelDisplay.class);
+                        //launchWordListIntent.putExtra("label", label);
+                        //launchWordListIntent.putExtra("counter",counter);
+                        //startActivity(launchWordListIntent);
+                        myDB.deleteLabel(label) ;
+                        Intent refresh = new Intent(MainActivity.this, MainActivity.class);
+                        refresh.putExtra("counter",counter);
+                        startActivity(refresh);
+                        finish();
 
                         return true;
                     }
@@ -351,7 +350,7 @@ public class MainActivity extends AppCompatActivity {
                 "Speak!!");
         try {
             startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
-            intent.putExtra("counter",counter);
+            intent.putExtra("counter", counter);
         } catch (ActivityNotFoundException a) {
             Toast.makeText(getApplicationContext(),
                     "speech_not_supported",
