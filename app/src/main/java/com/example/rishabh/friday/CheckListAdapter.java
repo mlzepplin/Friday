@@ -25,12 +25,11 @@ public class CheckListAdapter extends ArrayAdapter<String> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View view = null;
-        LayoutInflater vi = (LayoutInflater)context.getSystemService(
-                Context.LAYOUT_INFLATER_SERVICE);
-        view = vi.inflate(R.layout.check_list_item_view,null);
-        TextView tv = (TextView)view.findViewById(R.id.tv);
+        if(convertView==null) {
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.check_list_item_view, parent, false);
+        }
+        TextView tv = (TextView) convertView.findViewById(R.id.tv);
         tv.setText(checkList.get(position));
-        return view;
+        return convertView;
     }
 }

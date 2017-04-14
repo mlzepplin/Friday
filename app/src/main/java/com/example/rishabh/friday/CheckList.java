@@ -33,27 +33,48 @@ public class CheckList extends AppCompatActivity {
 
         final ArrayAdapter<String> itemsAdapter = new CheckListAdapter(this,R.layout.check_list_item_view,itemsList);
 
-        ListView itemsListView = (ListView)findViewById(R.id.checkListListView);
+        final ListView itemsListView = (ListView)findViewById(R.id.checkListListView);
         itemsListView.setAdapter(itemsAdapter);
 
         //LONG CLICK LISTENER
+        itemsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.i("hell---------------", "Enterd onlong click---------");
+            }
+        });
+        itemsListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.i("hell---------------", "Enterd onlong click---------");
+                String item = String.valueOf(parent.getItemAtPosition(position));
+                myDB.deleteCheckListItem(item);
+                ArrayList<String> itemslist = myDB.getAllCheckListItems();
+                CheckListAdapter adapter = new CheckListAdapter(CheckList.this,R.layout.check_list_item_view,itemslist);
+                itemsListView.setAdapter(adapter);
 
-        itemsListView.setOnItemLongClickListener(
+//                itemsListView.
+//                itemsAdapter.notifyDataSetChanged();
+                return true;
 
-                new AdapterView.OnItemLongClickListener() {
+            }
+        });
 
-                    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-
-                        String item = String.valueOf(parent.getItemAtPosition(position));
-                        Log.i("hell---------------", "Enterd onlong click---------");
-                        myDB.deleteCheckListItem(item);
-                        itemsAdapter.notifyDataSetChanged();
-                        return true;
-                    }
-
-                }
-
-        );
+//        itemsListView.setOnItemLongClickListener(
+//
+//                new AdapterView.OnItemLongClickListener() {
+//
+//                    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+//
+//
+//
+//
+//                        return true;
+//                    }
+//
+//                }
+//
+//        );
 
         fab = (FloatingActionButton)findViewById(R.id.checkListFab);
         fab.setOnClickListener(
@@ -74,21 +95,7 @@ public class CheckList extends AppCompatActivity {
         );
 
 
-     /*
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-      */
     }
-
-
-
-
 
 
 }
