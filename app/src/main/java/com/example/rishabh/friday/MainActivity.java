@@ -1,31 +1,19 @@
 package com.example.rishabh.friday;
 
 
-import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
-
 import android.content.res.Configuration;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
-
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.support.design.widget.FloatingActionButton;
-
-import android.support.v4.app.Fragment;
-import android.support.v4.content.res.ResourcesCompat;
-
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -285,7 +273,8 @@ public class MainActivity extends AppCompatActivity {
                 }
                 else{
 
-                    Toast.makeText(MainActivity.this, "You have Not Created anything for this!Remember!!!", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(MainActivity.this, CheckList.class);
+                    startActivity(intent);
 
                 }
 

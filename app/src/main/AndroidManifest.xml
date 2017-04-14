@@ -13,21 +13,26 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name" >
-
         </activity>
         <activity
             android:name=".ToActivity"
             android:label="Reminders" />
         <activity android:name=".LabelDisplay" />
         <activity android:name=".AddNewLabel" />
-        <activity android:name=".InitTutorial">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
+        <activity android:name=".InitTutorial" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".CheckList"
+            android:label="@string/title_activity_check_list"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
+        <activity android:name=".AddNewItem" >
         </activity>
     </application>
-
 
 </manifest>

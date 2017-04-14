@@ -16,6 +16,11 @@ public class MyDBHandler extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "MyDB.db";
     public static final String TABLE_NAME = "label_table";
+    public static final String TABLE_CHECKLIST = "checklist_table";
+    //column for checklist table
+    public static final String COLUMN_ITEM = "item";
+
+    //columns for note/label table
     public static final String COLUMN_ID = "id";
     public static final String COLUMN_TYPE = "type";
     public static final String COLUMN_LABEL = "label";
@@ -32,16 +37,66 @@ public class MyDBHandler extends SQLiteOpenHelper {
                 "create table " + TABLE_NAME +
                         "(" + COLUMN_ID + " integer primary key autoincrement, " + COLUMN_TYPE + " text, " + COLUMN_DESCRIPTION + " text, " + COLUMN_LABEL + " text);"
         );
+
+        // create table for checklist
+        db.execSQL(
+                "create table " + TABLE_CHECKLIST +
+                        "(" + COLUMN_ID + " integer primary key autoincrement, " + COLUMN_ITEM + " text);"
+        );
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // TODO Auto-generated method stub
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CHECKLIST);
         onCreate(db);
     }
 
+    //checklist table operations
+    public boolean insertCheckListItem(String item){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(COLUMN_ITEM, item);
+
+        db.insert(TABLE_CHECKLIST, null, contentValues);
+        return true;
+
+    }
+    public Integer deleteCheckListItem(Integer id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.delete(TABLE_CHECKLIST,
+                COLUMN_ID + " = ? ",
+                new String[]{Integer.toString(id)});
+    }
+    public Integer deleteCheckListItem(String item) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.delete(TABLE_CHECKLIST,
+                COLUMN_ITEM + " = ? ",
+                new String[]{item});
+    }
+    public ArrayList<String> getAllCheckListItems() {
+        ArrayList<String> array_list = new ArrayList<>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.rawQuery("select distinct " + COLUMN_ITEM + " from " + TABLE_CHECKLIST + " order by " + COLUMN_ID + ";", null);
+        res.moveToFirst();
+
+        while (!res.isAfterLast()) {
+            array_list.add(res.getString(res.getColumnIndex(COLUMN_ITEM)));
+            res.moveToNext();
+        }
+        res.close();
+        return array_list;
+    }
+
+
+    //notes table operations
+
+
     public boolean insertLabel(String type, String description, String label) {
+
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
 
