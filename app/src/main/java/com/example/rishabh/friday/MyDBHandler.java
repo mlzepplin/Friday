@@ -19,6 +19,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
     public static final String TABLE_CHECKLIST = "checklist_table";
     //column for checklist table
     public static final String COLUMN_ITEM = "item";
+    public static final String CHECK_STATUS = "checkstatus";
 
     //columns for note/label table
     public static final String COLUMN_ID = "id";
@@ -41,7 +42,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
         // create table for checklist
         db.execSQL(
                 "create table " + TABLE_CHECKLIST +
-                        "(" + COLUMN_ID + " integer primary key autoincrement, " + COLUMN_ITEM + " text);"
+                        "(" + COLUMN_ID + " integer primary key autoincrement, " + CHECK_STATUS + " integer, " + COLUMN_ITEM + " text);"
         );
     }
 
@@ -54,11 +55,12 @@ public class MyDBHandler extends SQLiteOpenHelper {
     }
 
     //checklist table operations
-    public boolean insertCheckListItem(String item){
+    public boolean insertCheckListItem(CheckListItem checkListItem){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
 
-        contentValues.put(COLUMN_ITEM, item);
+        contentValues.put(COLUMN_ITEM, checkListItem.getItemString());
+        contentValues.put(CHECK_STATUS,checkListItem.getCheckStatus());
 
         db.insert(TABLE_CHECKLIST, null, contentValues);
         return true;
@@ -76,21 +78,41 @@ public class MyDBHandler extends SQLiteOpenHelper {
                 COLUMN_ITEM + " = ? ",
                 new String[]{item});
     }
-    public ArrayList<String> getAllCheckListItems() {
-        ArrayList<String> array_list = new ArrayList<>();
+    public ArrayList<CheckListItem> getAllCheckListItems() {
+        ArrayList<CheckListItem> array_list = new ArrayList<>();
+        ArrayList<String> stringArray = new ArrayList<String>();
+        ArrayList<Integer> checkArray = new ArrayList<Integer>();
 
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("select distinct " + COLUMN_ITEM + " from " + TABLE_CHECKLIST + " order by " + COLUMN_ID + ";", null);
+        Cursor res = db.rawQuery("select " + COLUMN_ITEM + " from " + TABLE_CHECKLIST + " order by " + COLUMN_ID + ";", null);
         res.moveToFirst();
 
         while (!res.isAfterLast()) {
-            array_list.add(res.getString(res.getColumnIndex(COLUMN_ITEM)));
+            stringArray.add(res.getString(res.getColumnIndex(COLUMN_ITEM)));
+            res.moveToNext();
+        }
+
+
+        res = db.rawQuery("select " + CHECK_STATUS + " from " + TABLE_CHECKLIST + " order by " + COLUMN_ID + ";", null);
+        res.moveToFirst();
+        System.out.println("-----------"+res.getCount()+ "-----HHHHHHHHHH--------");
+        while (!res.isAfterLast()) {
+            checkArray.add(Integer.parseInt(res.getString(0)));
             res.moveToNext();
         }
         res.close();
+
+        for(int i=0;i<checkArray.size();i++){
+            array_list.add(new CheckListItem(checkArray.get(i),stringArray.get(i)));
+        }
+
         return array_list;
     }
-
+    public void updateCheckStatus(CheckListItem checkListItem){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("UPDATE " + TABLE_CHECKLIST +
+                " SET " + CHECK_STATUS + " = " + checkListItem.getCheckStatus() + " WHERE " + COLUMN_ITEM + " = " + "\"" + checkListItem.getItemString()+ "\"" + ";");
+    }
 
     //notes table operations
 

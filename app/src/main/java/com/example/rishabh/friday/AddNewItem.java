@@ -57,7 +57,7 @@ public class AddNewItem extends AppCompatActivity {
 
                             }
                             else {
-                                myDB.insertCheckListItem(item);
+                                myDB.insertCheckListItem(new CheckListItem(0,item));
                                 Intent launchItemListIntent = new Intent(AddNewItem.this, CheckList.class);
                                 startActivity(launchItemListIntent);
 
