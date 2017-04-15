@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/d_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.CardView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/c_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="5dp"
+            android:clickable="true"
+            android:foreground="?selectableItemBackground"
+            card_view:cardBackgroundColor="#81C784"
+            card_view:cardCornerRadius="12dp"
+            card_view:cardElevation="3dp"
+            card_view:contentPadding="4dp">
+
+
+            <RelativeLayout
+                android:id="@+id/whatsup1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context=".ReminderActivity">
+
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_below="@+id/frameLayout2"
+                    android:background="#ffeeeeee">
+
+                    <ScrollView
+                        android:id="@+id/reminderScroll"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"></ScrollView>
+
+                    <ListView
+                        android:id="@+id/reminderList"
+                        android:layout_width="fill_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="left|center_vertical"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false">
+
+                    </ListView>
+
+                    <ImageButton
+                        android:id="@+id/add"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right|bottom"
+                        android:layout_margin="16dp"
+                        android:background="#81C784"
+                        app:srcCompat="@drawable/plussign" />
+
+                    <ImageButton
+                        android:id="@+id/speak"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left|bottom"
+                        android:layout_margin="16dp"
+                        android:background="#81C784"
+                        android:src="@drawable/mic3" />
+
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/frameLayout2"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginBottom="12dp">
+
+                    <Button
+                        android:id="@+id/searchB"
+                        style="?android:attr/buttonStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right|center_vertical"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:text="GO" />
+
+                    <EditText
+                        android:id="@+id/searchText"
+                        android:layout_width="305dp"
+                        android:layout_height="wrap_content"
+                        android:layout_alignEnd="@+id/frameLayout2"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignRight="@+id/frameLayout2"
+                        android:layout_gravity="left|center_vertical"
+                        android:layout_marginEnd="211dp"
+                        android:layout_marginRight="211dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:textColor="#ffeeeeee" />
+
+                </FrameLayout>
+
+
+            </RelativeLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <ListView
+            android:id="@+id/navList1"
+            android:layout_width="200dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="left|start"
+            android:background="#ffeeeeee" />
+
+    </android.support.v4.widget.DrawerLayout>
+
+</android.support.design.widget.CoordinatorLayout>
