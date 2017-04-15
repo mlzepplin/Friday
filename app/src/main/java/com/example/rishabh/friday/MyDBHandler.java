@@ -67,10 +67,17 @@ public class MyDBHandler extends SQLiteOpenHelper {
 
     }
     public Integer deleteCheckListItem(Integer id) {
+        System.out.println("in -------- DB -------DELETE"+" ID :"+ id);
         SQLiteDatabase db = this.getWritableDatabase();
-        return db.delete(TABLE_CHECKLIST,
+        db.execSQL("delete from " + TABLE_CHECKLIST +
+                " WHERE " + COLUMN_ID + " = "  + id + ";");
+        System.out.println("delete * from " + TABLE_CHECKLIST +
+                " WHERE " + COLUMN_ID + " = "  + id + ";");
+        return 1;
+       /* return db.delete(TABLE_CHECKLIST,
                 COLUMN_ID + " = ? ",
                 new String[]{Integer.toString(id)});
+                */
     }
     public Integer deleteCheckListItem(String item) {
         SQLiteDatabase db = this.getWritableDatabase();

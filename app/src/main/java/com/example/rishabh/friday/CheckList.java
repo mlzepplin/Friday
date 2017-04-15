@@ -46,21 +46,20 @@ public class CheckList extends AppCompatActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 
-                String item = String.valueOf(parent.getItemAtPosition(position));
-                myDB.deleteCheckListItem(item);
-
+                //(CheckListItem)parent.getItemAtPosition(position);
+                CheckListItem checkListItem = (CheckListItem)view.getTag();
+                myDB.deleteCheckListItem(checkListItem.getItemString());
                 ArrayList<CheckListItem> itemslist = myDB.getAllCheckListItems();
                 CheckListAdapter adapter = new CheckListAdapter(CheckList.this,R.layout.check_list_item_view,itemslist);
                 itemsListView.setAdapter(adapter);
 
 //                itemsListView.
+                myDB.close();
 //                itemsAdapter.notifyDataSetChanged();
                 return true;
 
             }
         });
-
-
 
         fab = (FloatingActionButton)findViewById(R.id.checkListFab);
         fab.setOnClickListener(

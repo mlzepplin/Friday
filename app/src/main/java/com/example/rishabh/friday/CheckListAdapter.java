@@ -50,11 +50,8 @@ public class CheckListAdapter extends ArrayAdapter<CheckListItem> {
             checkBox.setChecked(true);
         else
             checkBox.setChecked(false);
-
-
-
-
-
+        convertView.setTag(checkList.get(position));
         return convertView;
     }
+
 }
