@@ -1,12 +1,18 @@
 package com.example.rishabh.friday;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
+import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.Locale;
 
 public class AddNewItem extends AppCompatActivity {
 
@@ -16,25 +22,39 @@ public class AddNewItem extends AppCompatActivity {
     MyDBHandler myDB;
     private static String flag;
 
+    //Speech stuff
+    private TextToSpeech t1;
+    private final int REQ_CODE_SPEECH_INPUT = 100;
+    private static final String TAG = "Http Connection";
+    final String nullCheck = "";
+    //private String seema;
+    private String speak;
+    private String from;
+    private String edit;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_new_item);
 
-        addItemButton = (Button)findViewById(R.id.addItemButton);
-        addItemEditText = (EditText)findViewById(R.id.addItemEditText);
+        addItemButton = (Button) findViewById(R.id.addItemButton);
+        addItemEditText = (EditText) findViewById(R.id.addItemEditText);
+
+        //speech
+        Intent intent=getIntent();
+        from=intent.getStringExtra("from");
 
 
         myDB = new MyDBHandler(this);
-
 
 
         addItemEditText.setOnClickListener(
                 new Button.OnClickListener() {
                     public void onClick(View view) {
 
-
+                        //seema = "Description";
+                        promptSpeechInput("Description of the checklist item?");
 
                     }
                 }
@@ -49,19 +69,38 @@ public class AddNewItem extends AppCompatActivity {
                     public void onClick(View view) {
 
 
-                        final  String item = addItemEditText.getText().toString();
+                        final String item = addItemEditText.getText().toString();
+
+                        final String toSpeak;
+                        //speech stuff
+                        toSpeak = "Your item with label" + item + "had been saved!";
+
+                        if (item.equals(null)) {
+                            Toast.makeText(AddNewItem.this, "must enter an item", Toast.LENGTH_LONG).show();
+
+                        } else {
+                            myDB.insertCheckListItem(new CheckListItem(0, item));
+
+                            //here
+                            t1 = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+                                public void onInit(int status) {
+                                    if (status != TextToSpeech.ERROR) {
+                                        t1.setLanguage(Locale.US);
+
+                                        t1.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
+
+                                    }
 
 
-                            if (item.equals(null)) {
-                                Toast.makeText(AddNewItem.this, "must enter an item", Toast.LENGTH_LONG).show();
-
+                                }
                             }
-                            else {
-                                myDB.insertCheckListItem(new CheckListItem(0,item));
-                                Intent launchItemListIntent = new Intent(AddNewItem.this, CheckList.class);
-                                startActivity(launchItemListIntent);
+                            );
 
-                            }
+                            //here
+                            Intent launchItemListIntent = new Intent(AddNewItem.this, CheckList.class);
+                            startActivity(launchItemListIntent);
+
+                        }
 
 
 
@@ -69,12 +108,62 @@ public class AddNewItem extends AppCompatActivity {
                 }
         );
 
+        //speech
+        if (from.equals("speech"))
+            addItemEditText.callOnClick();
+    }
+
+    private void promptSpeechInput(String dialog) {
+        flag = "ACTIVE";
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+                dialog);
+        try {
+            startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
+        } catch (ActivityNotFoundException a) {
+            Toast.makeText(getApplicationContext(),
+                    "speech_not_supported",
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        ArrayList<String> result;
+        System.out.println("Speech Result returned");
+        switch (requestCode) {
+            case REQ_CODE_SPEECH_INPUT: {
+                if (resultCode == RESULT_OK && null != data) {
+
+                    result = data
+                            .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                    float[] confidence = data
+                            .getFloatArrayExtra(RecognizerIntent.EXTRA_CONFIDENCE_SCORES);
+                    try {
+
+                        speak = result.get(0);
+
+                        addItemEditText.setText(speak);
+                        addItemButton.callOnClick();
+
+
+                    } catch (NullPointerException ne) {
+                        Toast.makeText(getApplicationContext(),
+                                "No detection !!!",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                break;
+            }
+        }
 
 
     }
-
-
-
 }
 
 
