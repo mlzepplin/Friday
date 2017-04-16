@@ -79,29 +79,36 @@ public class NewReminder extends AppCompatActivity {
             String label = intent.getStringExtra("event_id");
             Cursor cursor = getRemindersFromCalendar();
             for (int i = 0; i < cursor.getCount(); i++) {
+                System.out.println(cursor.getString(0));
                 if(label.equals(cursor.getString(0)))
                     break;
                 cursor.moveToNext();
             }
-            title.setText(cursor.getString(1));
-            description.setText(cursor.getString(2));
-            Calendar cal = milliToDate(Long.parseLong(cursor.getString(3)));
-            date.setText(getStringDate(cal));
+            if(!cursor.isAfterLast()) {
+                title.setText(cursor.getString(1));
+                description.setText(cursor.getString(2));
+                Calendar cal = milliToDate(Long.parseLong(cursor.getString(3)));
+                date.setText(getStringDate(cal));
 
-            time.setText(getStringTime(cal));
-            alarm.setChecked(getAlarmData(label));
+                time.setText(getStringTime(cal));
+                alarm.setChecked(getAlarmData(label));
 
-            title.setEnabled(false);
-            title.setFocusable(false);
-            description.setFocusable(false);
-            description.setEnabled(false);
-            date.setFocusable(false);
-            date.setEnabled(false);
-            time.setFocusable(false);
-            time.setEnabled(false);
-            alarm.setFocusable(false);
-            alarm.setEnabled(false);
-            save.setVisibility(View.INVISIBLE);
+                title.setEnabled(false);
+                title.setFocusable(false);
+                description.setFocusable(false);
+                description.setEnabled(false);
+                date.setFocusable(false);
+                date.setEnabled(false);
+                time.setFocusable(false);
+                time.setEnabled(false);
+                alarm.setFocusable(false);
+                alarm.setEnabled(false);
+                save.setVisibility(View.INVISIBLE);
+            }
+            else {
+                finish();
+            }
+
 
         }
         else if (from.equals("speech")){
@@ -192,7 +199,7 @@ public class NewReminder extends AppCompatActivity {
                             completeTime = dt.getTime();
                             if (completeTime > Calendar.getInstance().getTimeInMillis()) {
                                 //speech
-                                toSpeak = "Your note has been saved with title" + title.getText();
+                                toSpeak = "Your Reminder has been saved with title" + title.getText();
 
                                 t1 = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
                                     public void onInit(int status) {
@@ -220,10 +227,6 @@ public class NewReminder extends AppCompatActivity {
         );
     }
 
-   // public String changeDateFormat(String input) {
-        // DateTimeFormatter
-
-   // }
     public void setTime(View v) {
         final Calendar c = Calendar.getInstance();
         int mHour = c.get(Calendar.HOUR_OF_DAY);

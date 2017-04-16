@@ -34,13 +34,6 @@ import java.util.TimeZone;
 
 public class ReminderActivity extends AppCompatActivity {
 
-    /*
-     private ImageButton speak_btn;
-    private final int REQ_CODE_SPEECH_INPUT = 100;
-    private int counter=0;
-    private String flag="INACTIVE";
-    private String from= "button";
-     */
     //speech
     private ImageButton speak;
     private final int REQ_CODE_SPEECH_INPUT = 100;
@@ -79,12 +72,6 @@ public class ReminderActivity extends AppCompatActivity {
             }
         });
 
-        /*
-        counter = 0;
-        Intent intent = getIntent();
-         */
-
-        //till here
         add = (ImageButton) findViewById(R.id.add);
         from="new";
         add.setOnClickListener(
@@ -243,15 +230,18 @@ public class ReminderActivity extends AppCompatActivity {
                 if(temp!= null) {
                     temp.trim();
                     if (!temp.equals("")) {
-                        System.out.println(cursor.getString(0));
-                        System.out.println(temp);
-                        System.out.println(cursor.getString(2));
-                        System.out.println(cursor.getString(3));
-                        System.out.println(cursor.getString(4));
-                        System.out.println(cursor.getString(5));
-                        System.out.println(cursor.getString(6));
-                        if(cal.getTimeInMillis() < Long.parseLong(cursor.getString(3)))
+
+                        if(cal.getTimeInMillis() < Long.parseLong(cursor.getString(3))) {
+                            System.out.println(cursor.getString(0));
+                            System.out.println(temp);
+                            /*System.out.println(cursor.getString(2));
+                            System.out.println(cursor.getString(3));
+                            System.out.println(cursor.getString(4));
+                            System.out.println(cursor.getString(5));
+                            System.out.println(cursor.getString(6));*/
+
                             reminders.add(temp);
+                        }
                     }
 
                 }
@@ -340,26 +330,17 @@ public class ReminderActivity extends AppCompatActivity {
             from="speech";
             add.callOnClick();
         }
-        /*
-        else if (com.matches("(.*)Check(.*)") || com.matches("(.*)check(.*)") || com.matches("(.*)CHECK(.*)")) {
-            String[] newString=com.split("check");
-            myDB.updateCheckStatus(new CheckListItem(0,newString[1]));
-            Intent refresh=new Intent(this, CheckList.class);
-            startActivity(refresh);
-            finish();
-            //TextView s
-            // myDB.checkIt(newString[1]);
-            // itemsListView.ca
-            //checkBox.onCheckedChanged();
 
+        else if (com.matches("(.*)Open(.*)") || com.matches("(.*)open(.*)") || com.matches("(.*)OPEN(.*)")) {
+            String[] split=com.split("open ");
+            System.out.println(split[1]);
+            String label = split[1];
+            Intent launchReminderIntent = new Intent(ReminderActivity.this, NewReminder.class);
+            launchReminderIntent.putExtra("event_id", label);
+            launchReminderIntent.putExtra("from", "display");
+            startActivity(launchReminderIntent);
         }
-        else if (com.matches("(.*)Uncheck(.*)") || com.matches("(.*)uncheck(.*)") || com.matches("(.*)UNCHECK(.*)")) {
-            String[] newString = com.split("uncheck");
-            myDB.updateCheckStatus(new CheckListItem(1, newString[1]));
-            Intent refresh = new Intent(this, CheckList.class);
-            startActivity(refresh);
-            finish();
-        }*/
+
         else if (com.matches("(.*)delete(.*)") || com.matches("(.*)Delete(.*)") || com.matches("(.*)DELETE(.*)")) {
             String[] split = com.split("delete ");
             deleteReminder(split[1]);
@@ -368,17 +349,6 @@ public class ReminderActivity extends AppCompatActivity {
             finish();
 
         }
-        /*else if (com.matches("Delete all") || com.matches("delete all") || com.matches("Delete All") || com.matches("DELETE ALL")) {
-            //delete all
-        }*/
-            /*
-        else if (com.matches("(.*)delete(.*)") || com.matches("(.*)Delete(.*)") || com.matches("(.*)DELETE(.*)")) {
-            String[] newString=com.split("delete");
-            myDB.deleteCheckListItem(newString[1]);
-            Intent refresh=new Intent(this, CheckList.class);
-            startActivity(refresh);
-            finish();
-        }
-        */
+
     }
 }
