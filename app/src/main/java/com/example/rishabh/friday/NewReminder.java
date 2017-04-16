@@ -3,6 +3,7 @@ package com.example.rishabh.friday;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -10,6 +11,9 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.CalendarContract;
+import android.provider.Settings;
+import android.speech.RecognizerIntent;
+import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -22,11 +26,13 @@ import android.widget.Switch;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 public class NewReminder extends AppCompatActivity {
@@ -42,6 +48,17 @@ public class NewReminder extends AppCompatActivity {
     private Boolean alarmCheck = false;
     private long completeTime;
 
+    //speech
+    private TextToSpeech t1;
+    private static String flag;
+    private final int REQ_CODE_SPEECH_INPUT = 100;
+    private String seema="display";
+    public String from;
+    private String speak;
+    public int exceptionCount=-1;
+    String newd, newm, newy;
+    String dialog;
+    public String[] months={"January","February","March","April","May","June","July","August","September","October","November","December"};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,7 +74,7 @@ public class NewReminder extends AppCompatActivity {
         save = (Button) findViewById(R.id.save);
 
         Intent intent = getIntent();
-        String from = intent.getStringExtra("from");
+        from = intent.getStringExtra("from");
         if(from.equals("display")) {
             String label = intent.getStringExtra("event_id");
             Cursor cursor = getRemindersFromCalendar();
@@ -87,11 +104,45 @@ public class NewReminder extends AppCompatActivity {
             save.setVisibility(View.INVISIBLE);
 
         }
-        else {
+        else if (from.equals("speech")){
+            System.out.println("GOing here");
+            System.out.print(from);
+            seema = "title";
+            promptSpeechInput("Enter your title");
 
+            description.setOnClickListener(
+                    new Button.OnClickListener() {
+                        public void onClick(View v) {
+                            seema = "description";
+                            promptSpeechInput("Enter the description");
+                        }
+                    }
+            );
+            date.setOnClickListener(
+                    new Button.OnClickListener() {
+                        public void onClick(View v) {
+                            seema = "date";
+                            promptSpeechInput("Enter the date");
+                        }
+                    }
+            );
+
+            time.setOnClickListener(
+                    new Button.OnClickListener() {
+                        public void onClick(View v) {
+                            seema = "time";
+                            promptSpeechInput("Enter the time");
+                        }
+                    }
+            );
+            //boundary
+        }
+        else {
+            System.out.print("New here");
             dateButton.setOnClickListener(
                     new View.OnClickListener() {
                         public void onClick(View v) {
+
                             setDate(v);
                         }
                     }
@@ -110,48 +161,69 @@ public class NewReminder extends AppCompatActivity {
 
             alarm.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
                     alarmCheck = isChecked;
                     System.out.println(alarmCheck);
                 }
             });
 
-            save.setOnClickListener(
-                    new Button.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            System.out.println(title.getText() + " " + date.getText());
+        }
 
 
-                            if (!title.getText().toString().equals("") && !date.getText().toString().equals("")) {
+        save.setOnClickListener(
+                new Button.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        final String toSpeak;
+                        System.out.println(title.getText() + " " + date.getText());
 
-                                String longTime = date.getText().toString() + " " + time.getText().toString() + ":00";
-                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-                                Date dt = null;
-                                try {
-                                    dt = sdf.parse(longTime);
-                                    //dt.setMonth(dt.get);
-                                } catch (ParseException e) {
-                                    e.printStackTrace();
-                                }
-                                completeTime = dt.getTime();
-                                if (completeTime > Calendar.getInstance().getTimeInMillis()) {
 
-                                    addReminderInCalendar();
-                                    Intent intent = new Intent(NewReminder.this, ReminderActivity.class);
-                                    startActivity(intent);
-                                } else
-                                    Toast.makeText(getApplicationContext(), "Choose Future Time", Toast.LENGTH_SHORT).show();
-                            } else if (title.getText().toString().equals("")) {
-                                Toast.makeText(getApplicationContext(), "Enter Title", Toast.LENGTH_SHORT).show();
-                            } else {
-                                Toast.makeText(getApplicationContext(), "Select Date", Toast.LENGTH_SHORT).show();
+                        if (!title.getText().toString().equals("") && !date.getText().toString().equals("")) {
+
+                            String longTime = date.getText().toString() + " " + time.getText().toString() + ":00";
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                            Date dt = null;
+                            try {
+                                dt = sdf.parse(longTime);
+                                //dt.setMonth(dt.get);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
                             }
+                            completeTime = dt.getTime();
+                            if (completeTime > Calendar.getInstance().getTimeInMillis()) {
+                                //speech
+                                toSpeak = "Your note has been saved with title" + title.getText();
+
+                                t1 = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+                                    public void onInit(int status) {
+                                        if (status != TextToSpeech.ERROR) {
+                                            t1.setLanguage(Locale.US);
+
+                                            t1.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
+
+                                        } //here ^^
+                                    }
+                                });
+                                //speech
+                                addReminderInCalendar();
+                                Intent intent = new Intent(NewReminder.this, ReminderActivity.class);
+                                startActivity(intent);
+                            } else
+                                Toast.makeText(getApplicationContext(), "Choose Future Time", Toast.LENGTH_SHORT).show();
+                        } else if (title.getText().toString().equals("")) {
+                            Toast.makeText(getApplicationContext(), "Enter Title", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Select Date", Toast.LENGTH_SHORT).show();
                         }
                     }
-            );
-        }
+                }
+        );
     }
 
+   // public String changeDateFormat(String input) {
+        // DateTimeFormatter
+
+   // }
     public void setTime(View v) {
         final Calendar c = Calendar.getInstance();
         int mHour = c.get(Calendar.HOUR_OF_DAY);
@@ -356,6 +428,205 @@ public class NewReminder extends AppCompatActivity {
         return time;
     }
 
+    private void promptSpeechInput(String dialog) {
+        this.dialog = dialog;
+        flag = "ACTIVE";
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+                dialog);
+        try {
+            startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
+        } catch (ActivityNotFoundException a) {
+            Toast.makeText(getApplicationContext(),
+                    "speech_not_supported",
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        StringBuilder exceptionDate=new StringBuilder();
+
+        super.onActivityResult(requestCode, resultCode, data);
+        ArrayList<String> result;
+        System.out.println("Speech Result returned");
+        switch (requestCode) {
+            case REQ_CODE_SPEECH_INPUT: {
+                if (resultCode == RESULT_OK && null != data) {
+
+                    result = data
+                            .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+
+                    try {
+                        System.out.println(seema);
+
+                        speak = result.get(0);
+                        if(from.equals("speech")) {
+                            switch (seema) {
+                                case "title":
+                                    title.setText(speak);
+                                    description.callOnClick();
+                                    break;
+                                case "description":
+                                    description.setText(speak);
+                                   date.callOnClick();
+                                    break;
+                                case "alarm":
+                                    if(speak.equalsIgnoreCase("yes"))
+                                        alarm.setChecked(true);
+                                    else
+                                        alarm.setChecked(false);
+                                    alarmCheck = alarm.isChecked();
+                                    save.callOnClick();
+                                    break;
+                                case "date":
+                                    Calendar calendar=Calendar.getInstance();
+                                    String string = speak;
+                                    DateFormat format = new SimpleDateFormat("MMM d yyyy", Locale.ENGLISH);
+                                    Date dateObj = null;
+                                    try {
+                                        dateObj = format.parse(string);
+                                    } catch (ParseException e) {
+                                        e.printStackTrace();
+                                    }
+                                    System.out.println(dateObj);
+                                    calendar.setTime(dateObj);
+                                    int yr= calendar.get(Calendar.YEAR);
+                                    int mon=calendar.get(Calendar.MONTH)+1;
+                                    System.out.println(mon);
+                                    int dt=calendar.get(Calendar.DATE);
+                                    System.out.println(dt);
+                                    System.out.println("UP");
+                                  //  int yr= date.getYear();
+                                   // System.out.println(yr);
+                                   // int mon=date.getMonth()+1;
+                                  //  int dt=date.getDate();
+                                    StringBuilder sb= new StringBuilder();
+                                    sb.append(yr);
+                                    sb.append("/");
+                                    sb.append(mon);
+                                    sb.append("/");
+                                    sb.append(dt);
+                                    String newDate=sb.toString();
+                                    System.out.println(newDate);
+                                    date.setText(newDate);
+                                    time.callOnClick();
+                                    break;
+                                case "time":
+                                    SimpleDateFormat displayFormat = new SimpleDateFormat("HH:mm");
+                                    SimpleDateFormat parseFormat = new SimpleDateFormat("hh:mm a");
+                                    Date ddd = null;
+                                    speak=speak.replace(".","");
+                                    speak.toUpperCase();
+                                    try {
+                                        ddd = parseFormat.parse(speak);
+                                    } catch (ParseException e) {
+                                        e.printStackTrace();
+                                    }
+                                    System.out.println(parseFormat.format(ddd) + " = " + displayFormat.format(ddd));
+                                    time.setText(displayFormat.format(ddd).toString());
+                                    seema="alarm";
+                                    promptSpeechInput("Alarm, YES or NO?");
+                                    break;
+
+                                case "month":
+                                   // exceptionDate.append(speak);
+
+                                    System.out.println("Month "+speak);
+                                    int i;
+                                    for( i=0;i<12;i++)
+                                        if (speak.equals(months[i]))
+                                            break;
+                                    i=i+1;
+                                    StringBuilder temp=new StringBuilder();
+                                    temp.append(i);
+                                    newm=temp.toString();
+                                    System.out.println("MONTH CONVERTED  "+newm);
+                                    seema="dt";
+                                    promptSpeechInput("Enter the individual date");
+                                    break;
+
+                                case "dt":
+                                   // exceptionDate.append(" ");
+                                   // exceptionDate.append(speak);
+                                    newd=speak;
+                                    System.out.println("Date "+newd);
+                                    seema="year";
+                                    promptSpeechInput("Enter the year");
+                                    break;
+
+                                case "year":
+                                    newy=speak;
+                                    System.out.println("Year "+newy);
+                                   // exceptionDate.append(" ");
+                                    //exceptionDate.append(speak);
+                                    /*
+                                    String dateAppended=exceptionDate.toString();
+
+                                    //copy paste
+                                    Calendar calendarExp=Calendar.getInstance();
+                                    String stringExp = dateAppended;
+                                    DateFormat formatExp = new SimpleDateFormat("MMM d yyyy", Locale.ENGLISH);
+                                    Date dateObjExp = null;
+                                    try {
+                                        dateObj = formatExp.parse(stringExp);
+                                    } catch (ParseException e) {
+                                        e.printStackTrace();
+                                    }
+                                    System.out.println(dateObjExp);
+                                    calendarExp.setTime(dateObjExp);
+                                    int yrEx= calendarExp.get(Calendar.YEAR);
+                                    int monEx=calendarExp.get(Calendar.MONTH)+1;
+                                    System.out.println(monEx);
+                                    int dtExp=calendarExp.get(Calendar.DATE);
+                                    System.out.println(dtExp);
+                                    System.out.println("UP2222");
+                                    */
+
+                                    //final format
+                                    StringBuilder sb2= new StringBuilder();
+                                    sb2.append(newy);
+                                    sb2.append("/");
+                                    sb2.append(newm);
+                                    sb2.append("/");
+                                    sb2.append(newd);
+                                    String newDateExp=sb2.toString();
+                                    System.out.println(newDateExp);
+                                    date.setText(newDateExp);
+                                    time.callOnClick();
+                                    break;
+
+
+
+                            }
+                        }
+
+                    }
+                    catch(NullPointerException ne) {
+                        exceptionCount++;
+                        System.out.println("Exception count"+exceptionCount);
+                        if (exceptionCount>0 && seema.equals("date")) {
+                            seema="month";
+                            promptSpeechInput("Enter the month");
+                        }
+
+                        else {
+                            Toast.makeText(getApplicationContext(),
+                                    "No detection !!!",
+                                    Toast.LENGTH_SHORT).show();
+                            promptSpeechInput(dialog);
+                        }
+                    }
+                }
+
+                break;
+            }
+        }
+
+    }
 
 }

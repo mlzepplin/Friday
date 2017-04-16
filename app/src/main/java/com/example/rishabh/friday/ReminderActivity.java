@@ -1,5 +1,6 @@
 package com.example.rishabh.friday;
 
+import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -9,6 +10,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.CalendarContract;
+import android.speech.RecognizerIntent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
@@ -27,9 +29,25 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.TimeZone;
 
 public class ReminderActivity extends AppCompatActivity {
+
+    /*
+     private ImageButton speak_btn;
+    private final int REQ_CODE_SPEECH_INPUT = 100;
+    private int counter=0;
+    private String flag="INACTIVE";
+    private String from= "button";
+     */
+    //speech
+    private ImageButton speak;
+    private final int REQ_CODE_SPEECH_INPUT = 100;
+    private int counter=0;
+    private String flag="INACTIVE";
+    private String from="button";
+    //speech
 
     private ArrayAdapter<String> mAdapter;
     private DrawerLayout mDrawerLayout;
@@ -53,13 +71,28 @@ public class ReminderActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
+        //mic button changes
+        speak=(ImageButton) findViewById(R.id.speak);
+        speak.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                promptSpeechInput();
+            }
+        });
+
+        /*
+        counter = 0;
+        Intent intent = getIntent();
+         */
+
+        //till here
         add = (ImageButton) findViewById(R.id.add);
+        from="new";
         add.setOnClickListener(
             new View.OnClickListener() {
                 public void onClick(View view) {
                     System.out.println("Clicked");
                     Intent intent = new Intent(ReminderActivity.this, NewReminder.class);
-                    intent.putExtra("from", "new");
+                    intent.putExtra("from", from);
                     startActivity(intent);
 
                 }
@@ -175,7 +208,7 @@ public class ReminderActivity extends AppCompatActivity {
     private void deleteReminder(String event_id) {
         Context context = this.getApplicationContext();
         Calendar cal = Calendar.getInstance();
-        String uriCal = getCalendarUriBase(false);
+        String uriCal = getCalendarUriBase(true);
         int rows =0;
         if(uriCal != null) {
             Uri EVENTS_URI = Uri.parse(uriCal + "events");
@@ -246,5 +279,106 @@ public class ReminderActivity extends AppCompatActivity {
             return calendarURI.toString();
         else
             return null;
+    }
+
+    //speech
+    private void promptSpeechInput() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+                "Speak!!");
+        try {
+            startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
+            intent.putExtra("counter", counter);
+        } catch (ActivityNotFoundException a) {
+            Toast.makeText(getApplicationContext(),
+                    "speech_not_supported",
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        System.out.println("111111");
+        if(null != data) {
+            switch (requestCode) {
+                case REQ_CODE_SPEECH_INPUT: {
+                    System.out.println("222222 "+resultCode+" "+data.toString());
+                    if (resultCode == RESULT_OK && null != data) {
+                        System.out.println("222222 "+resultCode+" "+data.toString());
+                        ArrayList<String> result = data
+                                .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                        float[] confidence = data
+                                .getFloatArrayExtra(RecognizerIntent.EXTRA_CONFIDENCE_SCORES);
+                        try {
+
+                            Toast.makeText(getApplicationContext(),
+                                    result.get(0),
+                                    Toast.LENGTH_SHORT).show();
+                            findCommand(result.get(0));
+                        }
+                        catch(NullPointerException ne) {
+                            Toast.makeText(getApplicationContext(),
+                                    "No detection !!!",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    flag = "INACTIVE";
+                    break;
+                }
+            }
+        }
+        System.out.println("333333");
+    }
+
+    public void findCommand(String com) {
+        String temp = com;
+        temp = temp.toUpperCase();
+        if (temp.matches("(.*)REMINDER(.*)")) {
+            from="speech";
+            add.callOnClick();
+        }
+        /*
+        else if (com.matches("(.*)Check(.*)") || com.matches("(.*)check(.*)") || com.matches("(.*)CHECK(.*)")) {
+            String[] newString=com.split("check");
+            myDB.updateCheckStatus(new CheckListItem(0,newString[1]));
+            Intent refresh=new Intent(this, CheckList.class);
+            startActivity(refresh);
+            finish();
+            //TextView s
+            // myDB.checkIt(newString[1]);
+            // itemsListView.ca
+            //checkBox.onCheckedChanged();
+
+        }
+        else if (com.matches("(.*)Uncheck(.*)") || com.matches("(.*)uncheck(.*)") || com.matches("(.*)UNCHECK(.*)")) {
+            String[] newString = com.split("uncheck");
+            myDB.updateCheckStatus(new CheckListItem(1, newString[1]));
+            Intent refresh = new Intent(this, CheckList.class);
+            startActivity(refresh);
+            finish();
+        }*/
+        else if (com.matches("(.*)delete(.*)") || com.matches("(.*)Delete(.*)") || com.matches("(.*)DELETE(.*)")) {
+            String[] split = com.split("delete ");
+            deleteReminder(split[1]);
+            Intent refresh = new Intent(ReminderActivity.this, ReminderActivity.class);
+            startActivity(refresh);
+            finish();
+
+        }
+        /*else if (com.matches("Delete all") || com.matches("delete all") || com.matches("Delete All") || com.matches("DELETE ALL")) {
+            //delete all
+        }*/
+            /*
+        else if (com.matches("(.*)delete(.*)") || com.matches("(.*)Delete(.*)") || com.matches("(.*)DELETE(.*)")) {
+            String[] newString=com.split("delete");
+            myDB.deleteCheckListItem(newString[1]);
+            Intent refresh=new Intent(this, CheckList.class);
+            startActivity(refresh);
+            finish();
+        }
+        */
     }
 }
