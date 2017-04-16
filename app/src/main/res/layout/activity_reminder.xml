@@ -56,24 +56,32 @@
 
                     </ListView>
 
-                    <ImageButton
+                    <android.support.design.widget.FloatingActionButton
                         android:id="@+id/add"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="right|bottom"
                         android:layout_margin="16dp"
-                        android:background="#81C784"
-                        app:srcCompat="@drawable/plussign" />
+                        android:clickable="true"
+                        android:src="@drawable/plussign"
+                        app:layout_anchorGravity="bottom|right|end"
+                        card_view:backgroundTint="#81C784" />
 
+
+
+                    <!-- mic add -->
                     <ImageButton
                         android:id="@+id/speak"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="left|bottom"
                         android:layout_margin="16dp"
-                        android:background="#81C784"
-                        android:src="@drawable/mic3" />
+                        android:shape="ring"
+                        android:backgroundTint="#81C784"
+                        android:src="@drawable/mic3"
+                        tools:layout_height="wrap_content" />
 
+                    <!-- mic add ends -->
                 </FrameLayout>
 
                 <FrameLayout

@@ -2,11 +2,16 @@ package com.example.rishabh.friday;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -14,8 +19,13 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
+
 import java.util.ArrayList;
 import java.util.Locale;
+
+
+
+
 
 public class CheckList extends AppCompatActivity {
 
@@ -26,6 +36,16 @@ public class CheckList extends AppCompatActivity {
     private int counter=0;
     private String flag="INACTIVE";
     private String from= "button";
+
+
+    //sidebar changes
+    private ArrayAdapter<String> mAdapter;
+    private DrawerLayout mDrawerLayout;
+    private ListView mDrawerList;
+    private ActionBarDrawerToggle mDrawerToggle;
+    private String mActivityTitle;
+    //sidebar changes end
+
     //speech
     ListView itemsListView;
     MyDBHandler myDB;
@@ -37,6 +57,22 @@ public class CheckList extends AppCompatActivity {
         setContentView(R.layout.activity_check_list);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        //sidebar changes
+        mDrawerList = (ListView)findViewById(R.id.navList3);
+        mDrawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
+        mActivityTitle = getTitle().toString();
+        addDrawerItems();
+
+
+        setupDrawer();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+
+
+        //sidebar changes end
+
+
 
         //Declaring speech
 
@@ -106,6 +142,146 @@ public class CheckList extends AppCompatActivity {
 
 
     }
+
+    //sidebar changes
+    private void addDrawerItems() {
+        String[] osArray = { "Home", "Notes", "Reminders" };
+        mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, osArray);
+        mDrawerList.setAdapter(mAdapter);
+
+        mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                if(position==0) {
+                    Intent intent = new Intent(CheckList.this, ToActivity.class);
+                    intent.putExtra("counter",counter);
+                    startActivity(intent);
+
+                }
+                else if(position==1){
+                    Intent intent = new Intent(CheckList.this, MainActivity.class);
+                    intent.putExtra("counter",counter);
+                    startActivity(intent);
+                    //addReminderInCalendar();
+                }
+                else{
+
+                    Intent intent = new Intent(CheckList.this, ReminderActivity.class);
+                    startActivity(intent);
+
+                }
+
+
+                //Toast.makeText(MainActivity.this, "Note yet done!", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+
+    private void setupDrawer() {
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.drawer_open, R.string.drawer_close) {
+
+
+           /*
+            @SuppressLint("NewApi")
+            public void onDrawerSlide(View drawerView, float slideOffset)
+            {
+                super.onDrawerSlide(drawerView, slideOffset);
+                float moveFactor = (mDrawerList.getWidth() * slideOffset);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+                {
+                    frame.setTranslationX(moveFactor);
+                }
+                else
+                {
+                    TranslateAnimation anim = new TranslateAnimation(lastTranslate, moveFactor, 0.0f, 0.0f);
+                    anim.setDuration(0);
+                    anim.setFillAfter(true);
+                    frame.startAnimation(anim);
+
+                    lastTranslate = moveFactor;
+                }
+
+
+            }
+
+            */
+            /** Called when a drawer has settled in a completely open state. */
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                getSupportActionBar().setTitle("Menu");
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+                mDrawerToggle.syncState();
+            }
+
+            /** Called when a drawer has settled in a completely closed state. */
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+                getSupportActionBar().setTitle(mActivityTitle);
+
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+                mDrawerToggle.syncState();
+            }
+        };
+
+        mDrawerToggle.setDrawerIndicatorEnabled(true);
+        mDrawerLayout.addDrawerListener(mDrawerToggle);
+
+    }
+    //sidebar changes ends
+
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        //getMenuInflater().inflate(R.menu.menu_home_screen, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+
+        //sidebar changes
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        //sidebar changes ends
+
+        return super.onOptionsItemSelected(item);
+    }
+
+
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // Pass any configuration change to the drawer toggls
+        mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+
+
+
 
     //speech
     private void promptSpeechInput() {

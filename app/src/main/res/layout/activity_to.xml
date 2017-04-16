@@ -1,14 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_to"
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.rishabh.friday.ToActivity">
+    android:id="@+id/card_view"
+    android:layout_margin="5dp"
+    card_view:cardBackgroundColor="#81C784"
+    card_view:cardCornerRadius="12dp"
+    card_view:cardElevation="3dp"
+    card_view:contentPadding="4dp"
+    android:foreground="?selectableItemBackground"
+    android:clickable="true" >
 
-</RelativeLayout>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/activity_to"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        tools:context="com.example.rishabh.friday.ToActivity">
+
+        <Button
+            android:id="@+id/NotesButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="#f052b9"
+            android:text="Notes"
+            android:textColor="#FFFFFF"
+            android:onClick="NoteRedirect"
+            android:layout_marginTop="90dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
+
+        <Button
+            android:id="@+id/RemindersButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="#f052b9"
+            android:text="Reminders"
+            android:onClick="ReminderRedirect"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="95dp"
+            android:layout_below="@+id/NotesButton"
+            android:layout_alignLeft="@+id/NotesButton"
+            android:layout_alignStart="@+id/NotesButton" />
+
+        <Button
+            android:id="@+id/ChecklistButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="#f052b9"
+            android:text="Checklist"
+            android:onClick="ChecklistRedirect"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="87dp"
+            android:layout_below="@+id/RemindersButton"
+            android:layout_alignLeft="@+id/RemindersButton"
+            android:layout_alignStart="@+id/RemindersButton" />
+
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>
 

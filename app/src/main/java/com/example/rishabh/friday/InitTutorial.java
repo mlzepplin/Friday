@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.Button;
 
 public class InitTutorial extends AppCompatActivity {
@@ -17,7 +18,7 @@ public class InitTutorial extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(getSharedPreferences("user", Context.MODE_PRIVATE).getBoolean("login",false)){
-            Intent intent= new Intent(InitTutorial.this,MainActivity.class);
+            Intent intent= new Intent(InitTutorial.this,ToActivity.class);
             startActivity(intent);
             finish();
         }
@@ -30,4 +31,9 @@ public class InitTutorial extends AppCompatActivity {
 
 //
     }
+    public void HomeRedirect(View view) {
+        Intent intent = new Intent(InitTutorial.this, ToActivity.class);
+        startActivity(intent);
+    }
+
 }

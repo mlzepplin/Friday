@@ -58,27 +58,30 @@
                 android:focusableInTouchMode="false"
                 android:focusable="false" />
 
+
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/fab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="right|bottom"
                 android:layout_margin="16dp"
                 android:clickable="true"
-                android:src="@drawable/ic_fab"
+                android:src="@drawable/plussign"
                 app:layout_anchor="@id/labelsListView"
                 app:layout_anchorGravity="bottom|right|end"
-                android:layout_gravity="right|bottom" />
+                card_view:backgroundTint="#81C784" />
 
             <!-- mic add -->
             <ImageButton
                 android:id="@+id/btnSpeak"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:background="@null"
-                android:src="@drawable/mic"
                 android:layout_gravity="left|bottom"
-              />
+                android:layout_margin="16dp"
+                android:shape="ring"
+                android:backgroundTint="#81C784"
+                android:src="@drawable/mic3"
+                tools:layout_height="wrap_content" />
 
             <!-- mic add ends -->
         </FrameLayout>

@@ -6,6 +6,7 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -49,6 +51,9 @@ public class ReminderActivity extends AppCompatActivity {
     private String mActivityTitle;
     private ImageButton add;
     ListView reminderList;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,32 +141,35 @@ public class ReminderActivity extends AppCompatActivity {
     }
 
     private void addDrawerItems() {
-        String[] osArray = { "Notes", "Reminders", "Checklist" };
+        String[] osArray = { "Home", "Notes", "Checklist" };
         mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, osArray);
         mDrawerList.setAdapter(mAdapter);
 
         mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                int counter = getIntent().getIntExtra("counter",0);
+
                 if(position==0) {
-                    Intent intent = new Intent(ReminderActivity.this, MainActivity.class);
+                    Intent intent = new Intent(ReminderActivity.this, ToActivity.class);
                     intent.putExtra("counter",counter);
                     startActivity(intent);
 
                 }
                 else if(position==1){
-                    Intent intent = new Intent(ReminderActivity.this, ReminderActivity.class);
-                    intent.putExtra("counter",counter);
-                    startActivity(intent);
-                }
-                else{
-
-                    Toast.makeText(ReminderActivity.this, "You have Not Created anything for this!Remember!!!", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(ReminderActivity.this, MainActivity.class);
                     intent.putExtra("counter",counter);
                     startActivity(intent);
+                    //addReminderInCalendar();
                 }
+                else{
+
+                    Intent intent = new Intent(ReminderActivity.this, CheckList.class);
+                    startActivity(intent);
+
+                }
+
+
+                //Toast.makeText(MainActivity.this, "Note yet done!", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -170,6 +178,30 @@ public class ReminderActivity extends AppCompatActivity {
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.drawer_open, R.string.drawer_close) {
 
 
+           /*
+            @SuppressLint("NewApi")
+            public void onDrawerSlide(View drawerView, float slideOffset)
+            {
+                super.onDrawerSlide(drawerView, slideOffset);
+                float moveFactor = (mDrawerList.getWidth() * slideOffset);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+                {
+                    frame.setTranslationX(moveFactor);
+                }
+                else
+                {
+                    TranslateAnimation anim = new TranslateAnimation(lastTranslate, moveFactor, 0.0f, 0.0f);
+                    anim.setDuration(0);
+                    anim.setFillAfter(true);
+                    frame.startAnimation(anim);
+
+                    lastTranslate = moveFactor;
+                }
+
+
+            }
+
+            */
             /** Called when a drawer has settled in a completely open state. */
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
@@ -190,7 +222,34 @@ public class ReminderActivity extends AppCompatActivity {
 
         mDrawerToggle.setDrawerIndicatorEnabled(true);
         mDrawerLayout.addDrawerListener(mDrawerToggle);
+
     }
+
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+
+        //sidebar changes
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        //sidebar changes ends
+
+        return super.onOptionsItemSelected(item);
+    }
+
+
+
+
 
     private void deleteReminder(String event_id) {
         Context context = this.getApplicationContext();
@@ -288,6 +347,23 @@ public class ReminderActivity extends AppCompatActivity {
                     Toast.LENGTH_SHORT).show();
         }
     }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // Pass any configuration change to the drawer toggls
+        mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

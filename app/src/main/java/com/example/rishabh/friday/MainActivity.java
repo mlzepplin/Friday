@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
                     if (status != TextToSpeech.ERROR) {
                         t1.setLanguage(Locale.US);
 
-                        t1.speak("Welcome, I am FRIDAY, your personal Task Manager. How may I help you? ", TextToSpeech.QUEUE_FLUSH, null);
+                        t1.speak("Click on the mic button to speak? ", TextToSpeech.QUEUE_FLUSH, null);
 
                     } //here ^^
                 }
@@ -259,7 +259,7 @@ public class MainActivity extends AppCompatActivity {
 
     //sidebar changes
     private void addDrawerItems() {
-        String[] osArray = { "Notes", "Reminders", "Checklist" };
+        String[] osArray = { "Home", "Reminders", "Checklist" };
         mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, osArray);
         mDrawerList.setAdapter(mAdapter);
 
@@ -268,7 +268,7 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 if(position==0) {
-                    Intent intent = new Intent(MainActivity.this, MainActivity.class);
+                    Intent intent = new Intent(MainActivity.this, ToActivity.class);
                     intent.putExtra("counter",counter);
                     startActivity(intent);
 
@@ -290,8 +290,6 @@ public class MainActivity extends AppCompatActivity {
                 //Toast.makeText(MainActivity.this, "Note yet done!", Toast.LENGTH_SHORT).show();
             }
         });
-
-
     }
 
 

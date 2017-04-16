@@ -8,6 +8,7 @@
         android:layout_height="wrap_content"
         android:background="#f052b9"
         android:layout_gravity="center_horizontal"
+        android:onClick="HomeRedirect"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:text="Okay, Got It!"
