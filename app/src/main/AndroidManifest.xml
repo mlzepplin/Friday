@@ -3,6 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.rishabh.friday" >
 
+    <uses-permission android:name="android.permission.READ_CALENDAR" />
+    <uses-permission android:name="android.permission.WRITE_CALENDAR" />
+
     <application
         android:allowBackup="true"
         android:debuggable="true"
@@ -19,7 +22,9 @@
             android:label="Reminders" />
         <activity android:name=".LabelDisplay" />
         <activity android:name=".AddNewLabel" />
-        <activity android:name=".InitTutorial" >
+        <activity android:name=".InitTutorial"
+
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -33,6 +38,11 @@
         </activity>
         <activity android:name=".AddNewItem" >
         </activity>
+        <activity
+            android:name=".ReminderActivity"
+            android:label="@string/title_activity_reminder" >
+        </activity>
+        <activity android:name=".NewReminder"></activity>
     </application>
 
 </manifest>

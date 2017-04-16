@@ -2,13 +2,18 @@ package com.example.rishabh.friday;
 
 
 import android.content.ActivityNotFoundException;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.CalendarContract;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -24,7 +29,9 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -267,9 +274,10 @@ public class MainActivity extends AppCompatActivity {
 
                 }
                 else if(position==1){
-                    Intent intent = new Intent(MainActivity.this, ToActivity.class);
+                    Intent intent = new Intent(MainActivity.this, ReminderActivity.class);
                     intent.putExtra("counter",counter);
                     startActivity(intent);
+                    //addReminderInCalendar();
                 }
                 else{
 
@@ -470,6 +478,59 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
 
+    }
+
+
+    private void addReminderInCalendar() {
+        Calendar cal = Calendar.getInstance();
+        Uri EVENTS_URI = Uri.parse(getCalendarUriBase(true) + "events");
+        ContentResolver cr = getContentResolver();
+        TimeZone timeZone = TimeZone.getDefault();
+
+        /** Inserting an event in calendar. */
+        ContentValues values = new ContentValues();
+        values.put(CalendarContract.Events.CALENDAR_ID, 1);
+        values.put(CalendarContract.Events.TITLE, "First Reminder");
+        values.put(CalendarContract.Events.DESCRIPTION, "A test Reminder.");
+        values.put(CalendarContract.Events.ALL_DAY, 0);
+        // event starts in 1 minute
+        values.put(CalendarContract.Events.DTSTART, cal.getTimeInMillis() + 1 * 60 * 1000);
+        // ends 60 minutes from now
+        values.put(CalendarContract.Events.DTEND, cal.getTimeInMillis() + 2 * 60 * 1000);
+        values.put(CalendarContract.Events.EVENT_TIMEZONE, timeZone.getID());
+        values.put(CalendarContract.Events.HAS_ALARM, 1);
+        Uri event = cr.insert(EVENTS_URI, values);
+
+        ContentValues eventContent = values;
+
+        // Display event id.
+        //Toast.makeText(getApplicationContext(), "Event added :: ID :: " + event.getLastPathSegment(), Toast.LENGTH_SHORT).show();
+
+        /** Adding reminder for event added. */
+        Uri REMINDERS_URI = Uri.parse(getCalendarUriBase(true) + "reminders");
+        values = new ContentValues();
+        values.put(CalendarContract.Reminders.EVENT_ID, Long.parseLong(event.getLastPathSegment()));
+        values.put(CalendarContract.Reminders.METHOD, CalendarContract.Reminders.METHOD_ALERT);
+        values.put(CalendarContract.Reminders.MINUTES, 0);
+        cr.insert(REMINDERS_URI, values);
+
+        Toast.makeText(getApplicationContext(), "Event added, alarm will ring at "+(eventContent.getAsLong(CalendarContract.Events.DTSTART) - cal.getTimeInMillis())/1000+" secs", Toast.LENGTH_SHORT).show();
+    }
+
+    /** Returns Calendar Base URI, supports both new and old OS. */
+    private String getCalendarUriBase(boolean eventUri) {
+        Uri calendarURI = null;
+        try {
+            if (android.os.Build.VERSION.SDK_INT <= 7) {
+                calendarURI = (eventUri) ? Uri.parse("content://calendar/") : Uri.parse("content://calendar/calendars");
+            } else {
+                calendarURI = (eventUri) ? Uri.parse("content://com.android.calendar/") : Uri
+                        .parse("content://com.android.calendar/calendars");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return calendarURI.toString();
     }
 }
 
