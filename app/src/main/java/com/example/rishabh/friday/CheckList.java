@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
+import android.speech.tts.TextToSpeech;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -33,6 +34,7 @@ public class CheckList extends AppCompatActivity {
     private int counter=0;
     private String flag="INACTIVE";
     private String from= "button";
+    private TextToSpeech t1;
 
 
     //sidebar changes
@@ -119,6 +121,7 @@ public class CheckList extends AppCompatActivity {
         });
 
         fab = (FloatingActionButton)findViewById(R.id.checkListFab);
+        from="button";
         fab.setOnClickListener(
 
                 //Starting up an interface for an event
@@ -345,47 +348,196 @@ public class CheckList extends AppCompatActivity {
     }
 
     public void findCommand(String com) {
-        if (com.matches("(.*)Add(.*)") || com.matches("(.*)add(.*)") || com.matches("(.*)ADD(.*)")) {
+        boolean present;
+
+        if (com.matches("(.*)Add(.*)") || com.matches("(.*)add(.*)") || com.matches("(.*)ADD(.*)") || com.matches("(.*)Item(.*)") || com.matches("(.*)item(.*)") || com.matches("(.*)ITEM(.*)")) {
             from="speech";
             fab.callOnClick();
         }
-        else if (com.matches("(.*)Check(.*)") || com.matches("(.*)check(.*)") || com.matches("(.*)CHECK(.*)")) {
-            String[] newString=com.split("check");
-            myDB.updateCheckStatus(new CheckListItem(0,newString[1]));
-            Intent refresh=new Intent(this, CheckList.class);
-            startActivity(refresh);
-            finish();
-            //TextView s
-           // myDB.checkIt(newString[1]);
-           // itemsListView.ca
-            //checkBox.onCheckedChanged();
-
-        }
+        //unchecking an element
         else if (com.matches("(.*)Uncheck(.*)") || com.matches("(.*)uncheck(.*)") || com.matches("(.*)UNCHECK(.*)")) {
-            String[] newString = com.split("uncheck");
-            myDB.updateCheckStatus(new CheckListItem(1, newString[1]));
-            Intent refresh = new Intent(this, CheckList.class);
-            startActivity(refresh);
-            finish();
-        }
-        /*else if (com.matches("delete checked tasks") || com.matches("Delete checked tasks") || com.matches("DELETE CHECKED TASKS") || com.matches("Delete Checked Tasks")) {
-            myDB.deleteOnlyChecked();
-            //refresh
-        }
-        else if (com.matches("Delete all") || com.matches("delete all") || com.matches("Delete All") || com.matches("DELETE ALL")) {
-            //delete all
-        }*/
+            String[] newString = com.split("uncheck ");
+            if (newString.length<2) {
+                final String toSpeak;
+                toSpeak="Please name the label you want to uncheck" ;
+                //here
+                t1 = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+                    public void onInit(int status) {
+                        if (status != TextToSpeech.ERROR) {
+                            t1.setLanguage(Locale.US);
 
+                            t1.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
+
+                        }
+
+
+                    }
+                }
+                );
+            }
+            else {
+                present = isPresent(newString[1]);
+                if (present) {
+                    myDB.updateCheckStatus(new CheckListItem(0, newString[1]));
+                    Intent refresh = new Intent(this, CheckList.class);
+                    startActivity(refresh);
+                    finish();
+                } else {
+                    final String toSpeak;
+                    toSpeak = "Your item with label" + newString[1] + "does not exist";
+                    //here
+                    t1 = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+                        public void onInit(int status) {
+                            if (status != TextToSpeech.ERROR) {
+                                t1.setLanguage(Locale.US);
+
+                                t1.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
+
+                            }
+
+
+                        }
+                    }
+                    );
+                }
+            }
+        }
+        //checking an element
+        else if (com.matches("(.*)Check(.*)") || com.matches("(.*)check(.*)") || com.matches("(.*)CHECK(.*)")) {
+            String[] newString=com.split("check ");
+            if (newString.length<2) {
+                final String toSpeak;
+                toSpeak="Please name the label you want to check" ;
+                //here
+                t1 = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+                    public void onInit(int status) {
+                        if (status != TextToSpeech.ERROR) {
+                            t1.setLanguage(Locale.US);
+
+                            t1.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
+
+                        }
+
+
+                    }
+                }
+                );
+            }
+            else {
+                present = isPresent(newString[1]);
+                if (present) {
+                    myDB.updateCheckStatus(new CheckListItem(1, newString[1]));
+                    Intent refresh = new Intent(this, CheckList.class);
+                    startActivity(refresh);
+                    finish();
+                } else {
+                    final String toSpeak;
+                    toSpeak = "Your item with label" + newString[1] + "does not exist";
+                    //here
+                    t1 = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+                        public void onInit(int status) {
+                            if (status != TextToSpeech.ERROR) {
+                                t1.setLanguage(Locale.US);
+
+                                t1.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
+
+                            }
+
+
+                        }
+                    }
+                    );
+                }
+            }
+        }
+        //delete
         else if (com.matches("(.*)delete(.*)") || com.matches("(.*)Delete(.*)") || com.matches("(.*)DELETE(.*)")) {
-            String[] newString=com.split("delete");
-            myDB.deleteCheckListItem(newString[1]);
-            Intent refresh=new Intent(this, CheckList.class);
-            startActivity(refresh);
-            finish();
+            String[] newString = com.split("delete ");
+            if (newString.length<2) {
+                final String toSpeak;
+                toSpeak = "Please name the label you want to delete";
+                //here
+                t1 = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+                    public void onInit(int status) {
+                        if (status != TextToSpeech.ERROR) {
+                            t1.setLanguage(Locale.US);
+
+                            t1.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
+
+                        }
+
+
+                    }
+                }
+                );
+            } else {
+                present = isPresent(newString[1]);
+                if (present) {
+                    myDB.deleteCheckListItem(newString[1]);
+                    final String toSpeak;
+                    toSpeak = "Your item with label" + newString[1] + "has been deleted";
+                    //here
+                    t1 = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+                        public void onInit(int status) {
+                            if (status != TextToSpeech.ERROR) {
+                                t1.setLanguage(Locale.US);
+
+                                t1.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
+
+                            }
+
+
+                        }
+                    }
+                    );
+                    //till here
+                    Intent refresh = new Intent(this, CheckList.class);
+                    startActivity(refresh);
+                    finish();
+                } else {
+                    final String toSpeak;
+                    toSpeak = "Your item with label" + newString[1] + "does not exist";
+                    //here
+                    t1 = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+                        public void onInit(int status) {
+                            if (status != TextToSpeech.ERROR) {
+                                t1.setLanguage(Locale.US);
+
+                                t1.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
+
+                            }
+
+
+                        }
+                    }
+                    );
+                }
+            }
+
         }
+        else {
+            final String toSpeak;
+            toSpeak = "Command not recognized!";
+            //here
+            t1 = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+                public void onInit(int status) {
+                    if (status != TextToSpeech.ERROR) {
+                        t1.setLanguage(Locale.US);
+
+                        t1.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
+
+                    }
 
 
+                }
+            }
+            );
+        }
     }
 
-
+    public boolean isPresent(String label) {
+        boolean find= myDB.searchCheckListLabel(label);
+        System.out.println(find);
+        return find;
+    }
 }

@@ -53,8 +53,8 @@ public class AddNewItem extends AppCompatActivity {
                 new Button.OnClickListener() {
                     public void onClick(View view) {
 
-                        //seema = "Description";
-                        promptSpeechInput("Description of the checklist item?");
+                        if (from.equals("speech"))
+                            promptSpeechInput("Description of the checklist item?");
 
                     }
                 }
@@ -69,40 +69,57 @@ public class AddNewItem extends AppCompatActivity {
                     public void onClick(View view) {
 
 
+
                         final String item = addItemEditText.getText().toString();
 
                         final String toSpeak;
                         //speech stuff
-                        toSpeak = "Your item with label" + item + "had been saved!";
 
-                        if (item.equals(null)) {
-                            Toast.makeText(AddNewItem.this, "must enter an item", Toast.LENGTH_LONG).show();
+                        if (nullCheck.equals(item)) {
+                            Toast.makeText(AddNewItem.this, "Must enter an item", Toast.LENGTH_LONG).show();
 
                         } else {
-                            myDB.insertCheckListItem(new CheckListItem(0, item));
+                            if (myDB.searchCheckListLabel(item)) {
+                                toSpeak = "An item with label" + item + "already exists";
+                                //here
+                                t1 = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+                                    public void onInit(int status) {
+                                        if (status != TextToSpeech.ERROR) {
+                                            t1.setLanguage(Locale.US);
 
-                            //here
-                            t1 = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
-                                public void onInit(int status) {
-                                    if (status != TextToSpeech.ERROR) {
-                                        t1.setLanguage(Locale.US);
+                                            t1.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
 
-                                        t1.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
+                                        }
+
 
                                     }
-
-
                                 }
+                                );
                             }
-                            );
+                            else {
+                                myDB.insertCheckListItem(new CheckListItem(0, item));
+                                //speech stuff
+                                toSpeak = "Your item with label" + item + "has been saved!";
+                                //here
+                                t1 = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+                                    public void onInit(int status) {
+                                        if (status != TextToSpeech.ERROR) {
+                                            t1.setLanguage(Locale.US);
 
+                                            t1.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
+
+                                        }
+
+
+                                    }
+                                }
+                                );
+                            }
                             //here
                             Intent launchItemListIntent = new Intent(AddNewItem.this, CheckList.class);
                             startActivity(launchItemListIntent);
 
                         }
-
-
 
                     }
                 }

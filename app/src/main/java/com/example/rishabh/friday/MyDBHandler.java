@@ -222,6 +222,27 @@ public class MyDBHandler extends SQLiteOpenHelper {
         return find;
 
     }
+    //new function
+    public boolean searchCheckListLabel(String label) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        boolean find = false;
+        Cursor res = db.rawQuery("select * from " + TABLE_CHECKLIST + ";", null);
+        System.out.println("Going in here");
+        res.moveToFirst();
+        while(!res.isAfterLast()){
+
+            if( label.equals(res.getString(res.getColumnIndex(COLUMN_ITEM)))){
+                // find = res.getString(res.getColumnIndex(COLUMN_TYPE));
+                find = true;
+                break;
+            }
+            res.moveToNext();
+        }
+        res.close();
+        System.out.println("Coming out");
+        return find;
+    }
+
     public String getDescription(String label){
 
         SQLiteDatabase db = this.getReadableDatabase();
