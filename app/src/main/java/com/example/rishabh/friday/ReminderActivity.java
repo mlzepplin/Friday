@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.speech.RecognizerIntent;
+import android.speech.tts.TextToSpeech;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
@@ -51,6 +52,7 @@ public class ReminderActivity extends AppCompatActivity {
     private String mActivityTitle;
     private ImageButton add;
     ListView reminderList;
+    private TextToSpeech t1;
 
 
 
@@ -172,6 +174,7 @@ public class ReminderActivity extends AppCompatActivity {
                     homeIntent.addCategory( Intent.CATEGORY_HOME );
                     homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(homeIntent);
+                    finish();
 
                 }
 
@@ -409,27 +412,74 @@ public class ReminderActivity extends AppCompatActivity {
     public void findCommand(String com) {
         String temp = com;
         temp = temp.toUpperCase();
-        if (temp.matches("(.*)REMINDER(.*)")) {
+        if (com.matches("(.*)Open(.*)") || com.matches("(.*)open(.*)") || com.matches("(.*)OPEN(.*)")) {
+            String[] split=com.split("open ");
+            System.out.println(split[1]);
+            String label = split[1];
+            if(split.length<2) {
+                t1 = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+                    public void onInit(int status) {
+                        if (status != TextToSpeech.ERROR) {
+                            t1.setLanguage(Locale.US);
+                            t1.speak("Please say the Reminder code to open", TextToSpeech.QUEUE_FLUSH, null);
+
+                        } //here ^^
+                    }
+                });
+            }
+            else {
+                Intent launchReminderIntent = new Intent(ReminderActivity.this, NewReminder.class);
+                launchReminderIntent.putExtra("event_id", label);
+                launchReminderIntent.putExtra("from", "display");
+                startActivity(launchReminderIntent);
+            }
+        }
+        else if (temp.matches("(.*)REMINDER(.*)")) {
             from="speech";
             add.callOnClick();
         }
 
-        else if (com.matches("(.*)Open(.*)") || com.matches("(.*)open(.*)") || com.matches("(.*)OPEN(.*)")) {
-            String[] split=com.split("open ");
-            System.out.println(split[1]);
-            String label = split[1];
-            Intent launchReminderIntent = new Intent(ReminderActivity.this, NewReminder.class);
-            launchReminderIntent.putExtra("event_id", label);
-            launchReminderIntent.putExtra("from", "display");
-            startActivity(launchReminderIntent);
-        }
-
         else if (com.matches("(.*)delete(.*)") || com.matches("(.*)Delete(.*)") || com.matches("(.*)DELETE(.*)")) {
             String[] split = com.split("delete ");
-            deleteReminder(split[1]);
-            Intent refresh = new Intent(ReminderActivity.this, ReminderActivity.class);
-            startActivity(refresh);
-            finish();
+
+            if(split.length<2) {
+                t1 = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+                    public void onInit(int status) {
+                        if (status != TextToSpeech.ERROR) {
+                            t1.setLanguage(Locale.US);
+                            t1.speak("Please say the Reminder code to delete", TextToSpeech.QUEUE_FLUSH, null);
+
+                        } //here ^^
+                    }
+                });
+            }
+            else {
+                deleteReminder(split[1]);
+                t1 = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+                    public void onInit(int status) {
+                        if (status != TextToSpeech.ERROR) {
+                            t1.setLanguage(Locale.US);
+                            t1.speak("Reminder Deleted", TextToSpeech.QUEUE_FLUSH, null);
+
+                        } //here ^^
+                    }
+                });
+                Intent refresh = new Intent(ReminderActivity.this, ReminderActivity.class);
+                startActivity(refresh);
+                finish();
+            }
+
+        }
+        else {
+            t1 = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+                public void onInit(int status) {
+                    if (status != TextToSpeech.ERROR) {
+                        t1.setLanguage(Locale.US);
+                        t1.speak("Command not recognized", TextToSpeech.QUEUE_FLUSH, null);
+
+                    } //here ^^
+                }
+            });
 
         }
 

@@ -6,6 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.method.ScrollingMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 public class LabelDisplay extends AppCompatActivity {
@@ -20,6 +22,7 @@ public class LabelDisplay extends AppCompatActivity {
 
         Intent incomingIntent = getIntent();
         final String label = incomingIntent.getStringExtra("label");
+        final int counter = incomingIntent.getIntExtra("counter",0);
 
         myDB = new MyDBHandler(this);
 
@@ -30,7 +33,19 @@ public class LabelDisplay extends AppCompatActivity {
 
         //making text view scrollable
         descriptionTextView.setMovementMethod(new ScrollingMovementMethod());
-
+        ImageButton edit = (ImageButton)findViewById(R.id.edit);
+        edit.setOnClickListener(
+                new View.OnClickListener() {
+                    public void onClick(View c) {
+                        Intent launchAddNewLabelIntent = new Intent(LabelDisplay.this, AddNewLabel.class);
+                        launchAddNewLabelIntent.putExtra("EDIT", label);
+                        launchAddNewLabelIntent.putExtra("from","edit");
+                        launchAddNewLabelIntent.putExtra("counter",counter);
+                        startActivity(launchAddNewLabelIntent);
+                        finish();
+                    }
+                }
+        );
 
     }
 

@@ -117,35 +117,40 @@ public class AddNewLabel extends AppCompatActivity {
                         else {
                             if (nullCheck.equals(label)) {
                                 Toast.makeText(AddNewLabel.this, "must enter a label", Toast.LENGTH_LONG).show();
-                                toSpeak = "Label Empty";
+                                addLabelEditText.callOnClick();
+                                toSpeak = "";
                             }
+
                             else {
                                 myDB.insertLabel(type, description, label);
                                 toSpeak = "Your note has been saved with label "+label;
                             }
                         }
+                        if(toSpeak != "") {
+                            t1 = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+                                public void onInit(int status) {
+                                    if (status != TextToSpeech.ERROR) {
+                                        t1.setLanguage(Locale.US);
 
-                        t1=new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
-                            public void onInit(int status) {
-                                if (status != TextToSpeech.ERROR) {
-                                    t1.setLanguage(Locale.US);
+                                        t1.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
 
-                                    t1.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
-
-                                } //here ^^
-                            }
-                        });
-                        int counter = getIntent().getIntExtra("counter",0);
-                        Intent launchLabelListIntent = new Intent(AddNewLabel.this, MainActivity.class);
-                        launchLabelListIntent.putExtra("counter",counter);
-                        startActivity(launchLabelListIntent);
-
+                                    } //here ^^
+                                }
+                            });
+                            int counter = getIntent().getIntExtra("counter", 0);
+                            Intent launchLabelListIntent = new Intent(AddNewLabel.this, MainActivity.class);
+                            launchLabelListIntent.putExtra("counter", counter);
+                            startActivity(launchLabelListIntent);
+                        }
                     }
                 }
         );
 
-        if(from.equals("new") || from.equals("edit"))
+        if(from.equals("new"))
             addLabelEditText.callOnClick();
+        else if(from.equals("edit"))
+            addDescriptionEditText.callOnClick();
+
 
     }
 
@@ -215,8 +220,14 @@ public class AddNewLabel extends AppCompatActivity {
                         if(from.equals("new")) {
                             switch (seema) {
                                 case "Label":
-                                    addLabelEditText.setText(speak);
-                                    addDescriptionEditText.callOnClick();
+                                    if (myDB.searchLabel(speak)) {
+                                        Toast.makeText(AddNewLabel.this, "Note with label "+speak+" already exists, use edit functionality or enter new Label", Toast.LENGTH_LONG).show();
+                                        addLabelEditText.callOnClick();
+                                    }
+                                    else {
+                                        addLabelEditText.setText(speak);
+                                        addDescriptionEditText.callOnClick();
+                                    }
                                     break;
 
                                 case "Description":

@@ -131,8 +131,8 @@ public class NewReminder extends AppCompatActivity {
             date.setOnClickListener(
                     new Button.OnClickListener() {
                         public void onClick(View v) {
-                            seema = "date";
-                            promptSpeechInput("Enter the date");
+                            seema = "month";
+                            promptSpeechInput("Enter the Month");
                         }
                     }
             );
@@ -490,7 +490,8 @@ public class NewReminder extends AppCompatActivity {
                                     break;
                                 case "description":
                                     description.setText(speak);
-                                   date.callOnClick();
+                                    exceptionCount=2;
+                                    date.callOnClick();
                                     break;
                                 case "alarm":
                                     if(speak.equalsIgnoreCase("yes"))
