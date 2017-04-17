@@ -469,7 +469,8 @@ public class NewReminder extends AppCompatActivity {
 
 
     public void exitButton3(View view) {
-        System.exit(0);
+        Toast.makeText(this, "Reminder not saved !", Toast.LENGTH_LONG).show();
+        finish();
     }
 
     @Override

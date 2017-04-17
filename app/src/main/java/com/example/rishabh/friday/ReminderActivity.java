@@ -139,6 +139,17 @@ public class ReminderActivity extends AppCompatActivity {
 
         );
 
+        t1 = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+            public void onInit(int status) {
+                if (status != TextToSpeech.ERROR) {
+                    t1.setLanguage(Locale.US);
+
+                    t1.speak("Click on the mic button to speak? ", TextToSpeech.QUEUE_FLUSH, null);
+
+                } //here ^^
+            }
+        });
+
 
     }
 

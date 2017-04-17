@@ -148,7 +148,8 @@ public class AddNewItem extends AppCompatActivity {
     }
 
     public void exitButton2(View view) {
-        System.exit(0);
+        Toast.makeText(this, "Note not saved!", Toast.LENGTH_LONG).show();
+        finish();
     }
 
     @Override

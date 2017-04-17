@@ -162,7 +162,8 @@ public class AddNewLabel extends AppCompatActivity {
     }
 
     public void exitButton1(View view) {
-        System.exit(0);
+        Toast.makeText(AddNewLabel.this, "Note not saved!", Toast.LENGTH_LONG).show();
+        finish();
     }
 
 
