@@ -24,9 +24,6 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 
-
-
-
 public class CheckList extends AppCompatActivity {
 
 
@@ -57,7 +54,7 @@ public class CheckList extends AppCompatActivity {
         setContentView(R.layout.activity_check_list);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //sidebar changes
         mDrawerList = (ListView)findViewById(R.id.navList3);
         mDrawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
@@ -145,7 +142,7 @@ public class CheckList extends AppCompatActivity {
 
     //sidebar changes
     private void addDrawerItems() {
-        String[] osArray = { "Home", "Notes", "Reminders" };
+        String[] osArray = { "Home", "Notes", "Reminders", "Exit" };
         mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, osArray);
         mDrawerList.setAdapter(mAdapter);
 
@@ -165,10 +162,17 @@ public class CheckList extends AppCompatActivity {
                     startActivity(intent);
                     //addReminderInCalendar();
                 }
-                else{
+                else if(position==2){
 
                     Intent intent = new Intent(CheckList.this, ReminderActivity.class);
                     startActivity(intent);
+
+                }
+                else{
+                    Intent homeIntent = new Intent(Intent.ACTION_MAIN);
+                    homeIntent.addCategory( Intent.CATEGORY_HOME );
+                    homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(homeIntent);
 
                 }
 
@@ -234,6 +238,7 @@ public class CheckList extends AppCompatActivity {
 
 
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -260,7 +265,11 @@ public class CheckList extends AppCompatActivity {
         }
         //sidebar changes ends
 
+
         return super.onOptionsItemSelected(item);
+
+
+
     }
 
 

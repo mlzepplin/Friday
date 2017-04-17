@@ -55,5 +55,13 @@ public class ToActivity extends AppCompatActivity {
         Intent intent = new Intent(ToActivity.this, CheckList.class);
         startActivity(intent);
     }
+
+    public void Exit(View view) {
+        Intent homeIntent = new Intent(Intent.ACTION_MAIN);
+        homeIntent.addCategory( Intent.CATEGORY_HOME );
+        homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(homeIntent);
+
+    }
 }
 

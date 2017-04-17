@@ -37,10 +37,19 @@
                     android:layout_below="@+id/frame1">
 
                     <Button
+                        android:id="@+id/exitbutton3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="180dp"
+                        android:layout_marginTop="15dp"
+                        android:onClick="exitButton3"
+                        android:text="Cancel" />
+
+                    <Button
                         android:id="@+id/save"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="140dp"
+                        android:layout_marginLeft="80dp"
                         android:layout_marginTop="15dp"
                         android:text="Save" />
 

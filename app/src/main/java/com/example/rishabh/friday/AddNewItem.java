@@ -130,6 +130,10 @@ public class AddNewItem extends AppCompatActivity {
         }
     }
 
+    public void exitButton2(View view) {
+        System.exit(0);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

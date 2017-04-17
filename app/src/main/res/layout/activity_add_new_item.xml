@@ -10,23 +10,26 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/frameLayout">
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <EditText
+                android:id="@+id/addItemEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/addItemEditText"
-                android:focusableInTouchMode="true"
-                android:textColor="#e154a4"
-                android:focusable="true"
-                android:layout_below="@+id/addItemMessage"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_marginTop="36dp" />
+                android:layout_below="@+id/addItemMessage"
+                android:layout_marginTop="36dp"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:hint="Enter Label"
+                android:textColor="#e154a4" />
 
             <Button
                 android:layout_width="wrap_content"
@@ -40,25 +43,34 @@
                 android:text="ADD"
                 tools:text="ADD"
                 android:contentDescription="ADD"
+                android:layout_marginTop="83dp"
                 android:layout_below="@+id/addItemEditText"
-                android:layout_alignLeft="@+id/addItemMessage"
-                android:layout_alignStart="@+id/addItemMessage"
-                android:layout_marginTop="78dp" />
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginLeft="36dp"
+                android:layout_marginStart="36dp" />
 
 
-            <TextView
+            <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Enter Item"
-                android:id="@+id/addItemMessage"
-                android:layout_centerHorizontal="true"
-                android:textColor="#000000"
-                android:layout_gravity="center_horizontal|top"
-                android:focusable="false"
+                android:id="@+id/exitButton1"
+                android:background="#f88ba1"
+                android:layout_gravity="center_horizontal|bottom"
                 android:focusableInTouchMode="false"
-                tools:text="Enter Label"
-                android:contentDescription="Enter " />
+                android:focusable="false"
+                android:onClick="exitButton2"
+                android:text="CANCEL"
+                tools:text="CANCEL"
+                android:contentDescription="CANCEL"
+                android:layout_alignBaseline="@+id/addItemButton"
+                android:layout_alignBottom="@+id/addItemButton"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginRight="41dp"
+                android:layout_marginEnd="41dp" />
+
+
         </RelativeLayout>
     </FrameLayout>
 </RelativeLayout>

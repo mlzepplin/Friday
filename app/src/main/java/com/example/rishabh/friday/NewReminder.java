@@ -16,6 +16,7 @@ import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -72,6 +73,8 @@ public class NewReminder extends AppCompatActivity {
         timeButton = (ImageButton) findViewById(R.id.timeButton);
         alarm = (Switch) findViewById(R.id.alarm);
         save = (Button) findViewById(R.id.save);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
         from = intent.getStringExtra("from");
@@ -447,6 +450,17 @@ public class NewReminder extends AppCompatActivity {
                     "speech_not_supported",
                     Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        onBackPressed();
+        return true;
+    }
+
+
+    public void exitButton3(View view) {
+        System.exit(0);
     }
 
     @Override

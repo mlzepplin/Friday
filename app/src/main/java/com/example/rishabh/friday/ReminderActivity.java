@@ -141,7 +141,7 @@ public class ReminderActivity extends AppCompatActivity {
     }
 
     private void addDrawerItems() {
-        String[] osArray = { "Home", "Notes", "Checklist" };
+        String[] osArray = { "Home", "Notes", "Checklist", "Exit" };
         mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, osArray);
         mDrawerList.setAdapter(mAdapter);
 
@@ -161,10 +161,17 @@ public class ReminderActivity extends AppCompatActivity {
                     startActivity(intent);
                     //addReminderInCalendar();
                 }
-                else{
+                else if(position==2){
 
                     Intent intent = new Intent(ReminderActivity.this, CheckList.class);
                     startActivity(intent);
+
+                }
+                else{
+                    Intent homeIntent = new Intent(Intent.ACTION_MAIN);
+                    homeIntent.addCategory( Intent.CATEGORY_HOME );
+                    homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(homeIntent);
 
                 }
 

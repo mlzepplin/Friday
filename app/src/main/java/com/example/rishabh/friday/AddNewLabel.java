@@ -1,5 +1,6 @@
 package com.example.rishabh.friday;
 
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.os.Bundle;
@@ -144,7 +145,7 @@ public class AddNewLabel extends AppCompatActivity {
         );
 
         if(from.equals("new") || from.equals("edit"))
-            addDescriptionEditText.callOnClick();
+            addLabelEditText.callOnClick();
 
     }
 
@@ -153,6 +154,11 @@ public class AddNewLabel extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         return true;
     }
+
+    public void exitButton1(View view) {
+        System.exit(0);
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -208,12 +214,13 @@ public class AddNewLabel extends AppCompatActivity {
                         speak = result.get(0);
                         if(from.equals("new")) {
                             switch (seema) {
-                                case "Description":
-                                    addDescriptionEditText.setText(speak);
-                                    addLabelEditText.callOnClick();
-                                    break;
                                 case "Label":
                                     addLabelEditText.setText(speak);
+                                    addDescriptionEditText.callOnClick();
+                                    break;
+
+                                case "Description":
+                                    addDescriptionEditText.setText(speak);
                                     addNoteButton.callOnClick();
                                     break;
 
