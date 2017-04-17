@@ -157,18 +157,21 @@ public class CheckList extends AppCompatActivity {
                     Intent intent = new Intent(CheckList.this, ToActivity.class);
                     intent.putExtra("counter",counter);
                     startActivity(intent);
+                    finish();
 
                 }
                 else if(position==1){
                     Intent intent = new Intent(CheckList.this, MainActivity.class);
                     intent.putExtra("counter",counter);
                     startActivity(intent);
+                    finish();
                     //addReminderInCalendar();
                 }
                 else if(position==2){
 
                     Intent intent = new Intent(CheckList.this, ReminderActivity.class);
                     startActivity(intent);
+                    finish();
 
                 }
                 else{

@@ -59,6 +59,7 @@ public class NewReminder extends AppCompatActivity {
     public int exceptionCount=-1;
     String newd, newm, newy;
     String dialog;
+    int notFirst = 0;
     public String[] months={"January","February","March","April","May","June","July","August","September","October","November","December"};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,6 +107,8 @@ public class NewReminder extends AppCompatActivity {
                 time.setEnabled(false);
                 alarm.setFocusable(false);
                 alarm.setEnabled(false);
+                dateButton.setVisibility(View.INVISIBLE);
+                timeButton.setVisibility(View.INVISIBLE);
                 save.setVisibility(View.INVISIBLE);
             }
             else {
@@ -196,30 +199,36 @@ public class NewReminder extends AppCompatActivity {
                             try {
                                 dt = sdf.parse(longTime);
                                 //dt.setMonth(dt.get);
-                            } catch (ParseException e) {
-                                e.printStackTrace();
+
+                                completeTime = dt.getTime();
+                                if (completeTime > Calendar.getInstance().getTimeInMillis()) {
+                                    //speech
+                                    toSpeak = "Your Reminder has been saved with title" + title.getText();
+
+                                    t1 = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+                                        public void onInit(int status) {
+                                            if (status != TextToSpeech.ERROR) {
+                                                t1.setLanguage(Locale.US);
+
+                                                t1.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
+
+                                            } //here ^^
+                                        }
+                                    });
+                                    //speech
+                                    addReminderInCalendar();
+                                    Intent intent = new Intent(NewReminder.this, ReminderActivity.class);
+                                    startActivity(intent);
+                                    finish();
+                                }
+                                else
+                                    Toast.makeText(getApplicationContext(), "Choose Future Time", Toast.LENGTH_SHORT).show();
                             }
-                            completeTime = dt.getTime();
-                            if (completeTime > Calendar.getInstance().getTimeInMillis()) {
-                                //speech
-                                toSpeak = "Your Reminder has been saved with title" + title.getText();
-
-                                t1 = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
-                                    public void onInit(int status) {
-                                        if (status != TextToSpeech.ERROR) {
-                                            t1.setLanguage(Locale.US);
-
-                                            t1.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
-
-                                        } //here ^^
-                                    }
-                                });
-                                //speech
-                                addReminderInCalendar();
-                                Intent intent = new Intent(NewReminder.this, ReminderActivity.class);
-                                startActivity(intent);
-                            } else
-                                Toast.makeText(getApplicationContext(), "Choose Future Time", Toast.LENGTH_SHORT).show();
+                            catch (ParseException e) {
+                                Toast.makeText(getApplicationContext(), "Date or time format Invalid! Enter again.", Toast.LENGTH_SHORT).show();
+                                notFirst = 1;
+                                date.callOnClick();
+                            }
                         } else if (title.getText().toString().equals("")) {
                             Toast.makeText(getApplicationContext(), "Enter Title", Toast.LENGTH_SHORT).show();
                         } else {
@@ -547,8 +556,12 @@ public class NewReminder extends AppCompatActivity {
                                     }
                                     System.out.println(parseFormat.format(ddd) + " = " + displayFormat.format(ddd));
                                     time.setText(displayFormat.format(ddd).toString());
-                                    seema="alarm";
-                                    promptSpeechInput("Alarm, YES or NO?");
+                                    if(notFirst == 0) {
+                                        seema = "alarm";
+                                        promptSpeechInput("Alarm, YES or NO?");
+                                    }
+                                    else
+                                        save.callOnClick();
                                     break;
 
                                 case "month":
@@ -565,7 +578,7 @@ public class NewReminder extends AppCompatActivity {
                                     newm=temp.toString();
                                     System.out.println("MONTH CONVERTED  "+newm);
                                     seema="dt";
-                                    promptSpeechInput("Enter the individual date");
+                                    promptSpeechInput("Enter day of month");
                                     break;
 
                                 case "dt":

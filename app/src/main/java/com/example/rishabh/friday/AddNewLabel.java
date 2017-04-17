@@ -141,6 +141,7 @@ public class AddNewLabel extends AppCompatActivity {
                             Intent launchLabelListIntent = new Intent(AddNewLabel.this, MainActivity.class);
                             launchLabelListIntent.putExtra("counter", counter);
                             startActivity(launchLabelListIntent);
+                            finish();
                         }
                     }
                 }
