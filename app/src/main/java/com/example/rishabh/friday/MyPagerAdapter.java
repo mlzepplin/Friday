@@ -29,7 +29,7 @@ public class MyPagerAdapter extends PagerAdapter{
 
     @Override
     public int getCount() {
-        return 4;
+        return 6;
     }
 
     @Override
@@ -53,11 +53,17 @@ public class MyPagerAdapter extends PagerAdapter{
                 break;
             case 3:
                 layout = inflater.inflate(R.layout.intro_slide_4, container, false);
+                break;
+            case 4:
+                layout = inflater.inflate(R.layout.intro_slide5, container, false);
+                break;
+            case 5:
+                layout = inflater.inflate(R.layout.intro_slide6, container, false);
                 Button button  = (Button) (View)layout.findViewById(R.id.btnIntroEnd);
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(context, MainActivity.class);
+                        Intent intent = new Intent(context, ToActivity.class);
                         sharedPreferance = context.getSharedPreferences("user", Context.MODE_PRIVATE);
                         editor = sharedPreferance.edit();
                         editor.putBoolean("login", true);
